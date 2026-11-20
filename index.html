@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/medicine – ការព្យាបាលតាម Guideline</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2733;--mu:#5d6b7a;--ac:#0b6e8a;--bd:#d9dee4;--warn:#b42318;--wbg:#fef3f2}
+@media(prefers-color-scheme:dark){:root{--bg:#12171c;--card:#1c232b;--tx:#e8edf2;--mu:#9aa7b4;--ac:#5cc0dc;--bd:#2f3a45;--warn:#ff8a80;--wbg:#3a1e1c}}
+*{box-sizing:border-box}body{margin:0;font-family:"Khmer OS Battambang","Noto Sans Khmer",system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.7}
+header{padding:14px 16px;background:var(--ac);color:#fff;}
+header h1{margin:0;font-size:18px}
+main{max-width:900px;margin:0 auto;padding:12px}
+input,select,textarea,button{font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+button{cursor:pointer}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+#q{width:100%;margin-bottom:8px}
+.bar{position:sticky;top:0;z-index:10;background:var(--bg);padding:8px 0 6px;margin:0 -12px;padding-left:12px;padding-right:12px;border-bottom:1px solid var(--bd)}
+.tools{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:2px;padding-bottom:4px}
+.tools button{white-space:nowrap;flex:0 0 auto}
+#q{margin-bottom:6px}
+.list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--card)}
+.chip.on{background:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h2{margin:0 0 4px;font-size:20px}
+.sec{border-top:1px solid var(--bd);padding-top:8px;margin-top:10px}
+.sec h3{margin:0 0 4px;font-size:15px;color:var(--ac)}
+.sec ul{margin:0;padding-left:20px}
+.sec.red{background:var(--wbg);border-radius:8px;padding:8px 10px;border:1px solid var(--warn)}
+.sec.red h3{color:var(--warn)}
+.src{font-size:12px;color:var(--mu)}
+.tag{font-size:12px;background:var(--bd);border-radius:6px;padding:1px 6px;margin-left:4px}
+.disc{font-size:12px;color:var(--mu);text-align:center;padding:10px}
+textarea{width:100%;height:240px;font-family:monospace;font-size:12px}
+
+input,select,textarea,button{font-size:16px}
+button{padding:10px 12px;min-height:44px}
+.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.row #q{flex:1;min-width:0;margin:0;width:auto}
+.row b{flex:1}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tab{padding:6px 2px;font-size:13px;line-height:1.25;min-height:50px}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+#menu{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px;margin-top:8px}
+.mrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.chip{padding:9px 14px;font-size:15px}
+.chip.cat{font-size:13px;padding:6px 12px;background:transparent}
+.chip.cat.on{background:var(--ac);color:#fff}
+#cats{flex-wrap:nowrap;overflow-x:auto;margin-bottom:6px}
+#cats .chip{flex:0 0 auto;white-space:nowrap}
+#view,#dx,#lab,#sub{scroll-margin-top:150px}
+details.sec>summary{cursor:pointer;font-weight:700;color:var(--ac);padding:6px 0;list-style:revert}
+details.sec.red>summary{color:var(--warn)}
+details.sec[open]>summary{margin-bottom:4px}
+#dxr{position:sticky;top:140px;z-index:5;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px;margin:6px 0;max-height:36vh;overflow:auto}
+#dxr:empty{display:none}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>/medicine · ការព្យាបាលតាម Guideline (WHO / កម្ពុជា)</h1></header>
+<main>
+<div class="bar">
+ <div class="row"><input id="q" placeholder="🔍 ស្វែងរកជំងឺ… (Khmer / English / French)" autocomplete="off"><button id="wb" class="p" onclick="webSearch()" title="Internet">🌐</button><button id="gear" onclick="toggleMenu()">⚙</button></div>
+ <div class="tabs">
+  <button class="tab on" data-t="dis" onclick="show('dis')">📋<br>ជំងឺ</button>
+  <button class="tab" data-t="dx" onclick="show('dx')">🩺<br>រកវិនិច្ឆ័យ</button>
+  <button class="tab" data-t="lab" onclick="show('lab')">🧪<br>លទ្ធផល/សញ្ញា</button>
+  <button class="tab" data-t="sub" onclick="show('sub')">💊<br>ថ្នាំជំនួស</button>
+ </div>
+ <div id="menu" hidden>
+  <div class="mrow"><b>ភាសា</b><button class="lg" data-l="km" onclick="setLang('km')">ខ្មែរ</button><button class="lg" data-l="en" onclick="setLang('en')">EN</button><button class="lg" data-l="fr" onclick="setLang('fr')">FR</button></div>
+  <div class="mrow"><button id="eb" onclick="toggleEd()">✎ កែ / បន្ថែម JSON</button><button onclick="exp()">⬇ Export</button><label><button onclick="document.getElementById('f').click()">⬆ Import</button><input id="f" type="file" accept=".json" hidden></label></div>
+ <div class="mrow"><button id="csign" onclick="window.cloudSign&&cloudSign()">☁ Sign in (Google)</button><button onclick="window.cloudLoad&&cloudLoad()">☁⬇ Load</button><button onclick="window.cloudSaveNow&&cloudSaveNow()">☁⬆ Save</button></div><div id="cst" class="src"></div>
+ </div>
+</div>
+<div id="web"></div>
+<div id="dx" class="card" hidden><div class="row"><b>ជ្រើសរោគសញ្ញា / sign / លទ្ធផលពិនិត្យ</b><button onclick="clrDx()">សម្អាត</button></div><div id="dxr"></div><div id="dxc"></div></div>
+<div id="sub" class="card" hidden><b>ថ្នាំក្នុងក្រុមតែមួយ / ជំនួសគ្នាបាន</b><input id="sq" placeholder="វាយឈ្មោះថ្នាំ ឬក្រុម…" oninput="buildSub()" style="width:100%;margin:6px 0"><div id="subc"></div><div class="src">ដូស និងសមមូលជាតម្លៃប្រហែលសម្រាប់មនុស្សពេញវ័យ។ មុនជំនួស ពិនិត្យ តម្រងនោម/ថ្លើម, មានផ្ទៃពោះ, អាឡែស៊ី, អន្តរកម្ម, និងថ្នាំដែលមានក្នុង formulary។ មិនទាន់ផ្ទៀងផ្ទាត់ជាមួយ guideline/formulary កម្ពុជា។</div></div>
+<div id="lab" class="card" hidden><b>បកស្រាយលទ្ធផលពិនិត្យអម និងសញ្ញា</b><div id="labc"></div></div>
+<div id="ed" class="card" hidden>
+ <p class="src">កែ JSON រួចចុច «រក្សាទុក»។ ទិន្នន័យរក្សាក្នុង browser នេះ (បើមាន) ហើយអាច Export ជាឯកសារ។</p>
+ <textarea id="ta"></textarea><br><button class="p" onclick="saveEd()">រក្សាទុក</button>
+</div>
+<div class="list" id="cats"></div>
+<div class="list" id="list"></div>
+<div id="view"></div>
+<div class="disc" id="dc">ឧបករណ៍ជំនួយប៉ុណ្ណោះ។ គ្រូពេទ្យត្រូវផ្ទៀងផ្ទាត់ជាមួយ guideline ចុងក្រោយ និងវិនិច្ឆ័យតាមអ្នកជំងឺនីមួយៗ មុនប្រើ។</div>
+</main>
+<script>
+const SECS=[["def","និយមន័យ / ចំណាត់ថ្នាក់"],["inv","ការពិនិត្យអម"],["tx","ការព្យាបាល"],["ae","ផលរំខាន"],["com","ជំងឺអម / ក្រុមពិសេស"],["ddi","ទំនាក់ទំនងថ្នាំ"],["red","Red flags / ពេលត្រូវ admit ឬបញ្ជូន"]];
+const DEFAULT=[{
+ id:"dengue",name:"គ្រុនឈាម (Dengue)",alt:"dengue fever dengue fièvre",
+ status:"ព្រាង – ត្រូវផ្ទៀងផ្ទាត់ជាមួយ CNM/MoH កម្ពុជា",
+ def:["ចំណាត់ថ្នាក់ព្យាបាល WHO៖ Group A (ព្យាបាលក្រៅ), Group B (មានសញ្ញាព្រមាន/ជំងឺអម/កត្តាសង្គម → ដេកពេទ្យ), Group C (ធ្លាក់ឈាម/ហូរឈាមធ្ងន់/ខូចសរីរាង្គ)",
+  "សញ្ញាព្រមាន៖ ក្អួតជាប់ៗ, ទឹកក្នុងប្រហោង (ascites/pleural effusion), ហូរឈាមមាត់ច្រមុះ, ថ្លើមធំ >2 cm, postural hypotension, ច្របូកច្របល់/ងងុយ, Hct កើនឡើង"],
+ inv:["CBC + platelet + Hct មុនចាប់ផ្តើមផ្តល់សារធាតុរាវ (Group B/C) ហើយតាមដាន Hct មុន–ក្រោយផ្តល់សារធាតុរាវ","LFT (AST/ALT) – ប្រសិន ≥10× ULN កុំប្រើ paracetamol (MSF)","Dengue NS1/IgM តាមលទ្ធភាព; បើ Group C៖ lactate, creatinine, glucose, ECG/ultrasound តាមតម្រូវ"],
+ tx:["<b>Group A (ក្រៅ)៖</b> សម្រាក, ផឹក ORS/ទឹកច្រើន (ជៀសវាង sports drink), paracetamol 10 mg/kg/ដូស, ≤3–4 ដង/ថ្ងៃ ក្នុងកុមារ និង ≤3 g/ថ្ងៃ មនុស្សពេញវ័យ; tepid sponging បើក្តៅខ្លាំង។ ណាត់ពិនិត្យឡើងវិញរៀងរាល់ថ្ងៃ។",
+  "<b>Group B (ដេកពេទ្យ)៖</b> តាមដាន vital signs, ចូល/ចេញ សារធាតុរាវ និងបរិមាណទឹកនោម (គោលដៅ ≥0.5 ml/kg/h មនុស្សធំ, ≥1 ml/kg/h កុមារ); បើត្រូវការ IV ប្រើ crystalloid (Ringer's lactate) តាមប្រូតូកូល។",
+  "<b>Group C (បន្ទាន់)៖</b> crystalloid bolus តាមប្រូតូកូល WHO/ជាតិ; បើមិនប្រសើរក្រោយ bolus ៣ដង → ចាត់ទុកជា severe, ICU; បញ្ចូលឈាមតែពេលមានហូរឈាមធ្ងន់/មិនឆ្លើយតបនឹងសារធាតុរាវ។",
+  "<b>WHO 2025 (arboviral)៖</b> protocolised oral fluids; paracetamol ឬ metamizole សម្រាប់ឈឺ/គ្រុន; IV ប្រើ crystalloid មិនមែន colloid; តាមដាន capillary refill time និង lactate។",
+  "កម្រិតដូស Group B/C ជាក់លាក់ (ml/kg/h) → <i>បំពេញពី guideline ជាតិកម្ពុជា ជំនាន់ចុងក្រោយ</i>"],
+ ae:["Paracetamol៖ ពុលថ្លើមពេលលើសកម្រិត","<b>ជៀសវាង NSAIDs/aspirin</b> (ហានិភ័យហូរឈាម) – ការអនុវត្តទូទៅ; ផ្ទៀងផ្ទាត់","Fluid overload ពេលផ្តល់សារធាតុរាវច្រើន/យឺតកាត់បន្ថយ"],
+ com:["ថ្លើម៖ AST/ALT ≥10× ULN → កុំប្រើ paracetamol","តម្រងនោម៖ កែ paracetamol តាម WHO Table 4-3","ស្ត្រីមានផ្ទៃពោះ, ទារក/កុមារតូច, មនុស្សចាស់, ទឹកនោមផ្អែម, សម្ពាធឈាមខ្ពស់៖ ចាត់ទុកជា Group B (ជំងឺអម) ហើយតាមដានជិត","ប្រើកម្រិតទម្ងន់ lower of actual/ideal body weight ក្នុងការគណនាសារធាតុរាវ (PhilHealth/WHO)"],
+ ddi:["ជៀសវាង NSAIDs, aspirin, anticoagulant បើអាច","<i>បំពេញបន្ថែម</i>"],
+ red:["ឈឺពោះខ្លាំង, ក្អួតជាប់ៗ, ហូរឈាម, ងងុយ/ច្របូកច្របល់","ត្រជាក់ដៃជើង, ជីពចរខ្សោយ, pulse pressure តូច, ដកដង្ហើមខ្លី","Hct កើន ហើយ platelet ធ្លាក់លឿន → ដេកពេទ្យ"],
+ src:["WHO guidelines for clinical management of arboviral diseases (2025)","WHO dengue group A/B/C (ប្រភពសង្ខេបតាម healthmanagement.org)","MSF Clinical Guidelines – Dengue","ត្រូវបន្ថែម៖ គោលការណ៍ណែនាំជាតិកម្ពុជា (CNM/MoH)"],
+ verified:"2026-11-20"
+}];
+DEFAULT[0].cat="ជំងឺឆ្លង";
+const ST="ព្រាង – ផ្ទៀងផ្ទាត់ជាមួយ WHO និង CNM/MoH កម្ពុជា មុនប្រើ";
+const SR=["WHO guidelines (ទូទៅ)","ត្រូវបន្ថែម៖ គោលការណ៍ណែនាំជាតិកម្ពុជា"];
+function mk(id,cat,name,alt,tx,o={}){DEFAULT.push({id,cat,name,alt,status:ST,def:o.def,inv:o.inv,tx,ae:o.ae,com:o.com,ddi:o.ddi,red:o.red,src:o.src||SR,verified:"ព្រាង"})}
+const G6="ពិនិត្យ G6PD មុនប្រើ primaquine";
+mk("malaria","ជំងឺឆ្លង","គ្រុនចាញ់ (Malaria)","paludisme",
+["Falciparum មិនស្មុគស្មាញ៖ ACT (នៅកម្ពុជាជាទូទៅ DHA-piperaquine ៣ថ្ងៃ) + primaquine កម្រិតទាបតែមួយដង – ផ្ទៀងផ្ទាត់គោលការណ៍ជាតិ (CNM)","Vivax៖ chloroquine ៣ថ្ងៃ + primaquine ១៤ថ្ងៃ (បន្ទាប់ពីពិនិត្យ G6PD)","ធ្ងន់៖ artesunate IV 2.4 mg/kg នៅម៉ោង 0, 12, 24 បន្ទាប់មកជារៀងរាល់ 24 ម៉ោង រហូតអាចលេបបាន រួចបញ្ចប់ដោយ ACT ពេញវគ្គ"],
+{inv:["RDT ឬ blood film, CBC, glucose, creatinine, LFT (ករណីធ្ងន់)"],ae:["QT ពន្យារ (piperaquine)","Hemolysis ក្នុង G6PD deficiency (primaquine)"],com:[G6,"ស្ត្រីមានផ្ទៃពោះ៖ primaquine ហាម; ជ្រើស ACT តាមត្រីមាស","កុមារ៖ ដូសតាមទម្ងន់ តាមតារាងជាតិ"],red:["ស្មារតីប្រែប្រួល, ប្រកាច់, ដកដង្ហើមខ្លី, ជាំលឿងធ្ងន់, hypoglycemia, ទឹកនោមខ្មៅ","parasitemia ខ្ពស់ → ដេកពេទ្យ"]});
+mk("typhoid","ជំងឺឆ្លង","គ្រុនពោះវៀន (Typhoid)","enteric fever typhoïde",
+["មិនស្មុគស្មាញ៖ azithromycin 1 g ថ្ងៃទី១ បន្ទាប់មក 500 mg/ថ្ងៃ ៦ថ្ងៃ (ឬ 1 g/ថ្ងៃ ៥–៧ថ្ងៃ)","ធ្ងន់/មិនអាចលេប៖ ceftriaxone 2 g IV/ថ្ងៃ ៧–១៤ថ្ងៃ","ភាពស៊ាំ fluoroquinolone ខ្ពស់នៅអាស៊ី – ពិនិត្យ culture/sensitivity"],
+{inv:["Blood culture មុនថ្នាំ, CBC, LFT"],ae:["Azithromycin៖ ចង្អោរ, QT ពន្យារ","Ceftriaxone៖ ឡើងកម្តៅពិបាក biliary sludge"],com:["កុមារ, ស្ត្រីមានផ្ទៃពោះ៖ ដូសតាមទម្ងន់/ត្រីមាស"],red:["ហូរឈាមពោះវៀន, perforation (ឈឺពោះធ្ងន់), ស្មារតីប្រែប្រួល, shock"]});
+mk("cap","ផ្លូវដង្ហើម","ជំងឺរលាកសួត (Pneumonia – CAP)","pneumonie",
+["មិនធ្ងន់ (ក្រៅ)៖ amoxicillin 500 mg–1 g លេប ៣ដង/ថ្ងៃ ៥ថ្ងៃ (WHO: amoxicillin ជាជួរទី១)","ធ្ងន់៖ ceftriaxone 1–2 g IV/ថ្ងៃ ± macrolide (azithromycin 500 mg/ថ្ងៃ) បើសង្ស័យ atypical","អុកស៊ីសែនបើ SpO2 <90%"],
+{def:["កុមារ <5 ឆ្នាំ៖ ចាត់ថ្នាក់តាម IMCI (ដកដង្ហើមលឿន, ទាញទ្រូង, សញ្ញាគ្រោះថ្នាក់)"],inv:["SpO2, CXR, CBC, CRP; ធ្ងន់៖ blood culture, creatinine"],ae:["Amoxicillin៖ រាគ, កន្ទួល","Macrolide៖ QT ពន្យារ"],com:["COPD/ទឹកនោមផ្អែម/មនុស្សចាស់៖ ឆាប់ដេកពេទ្យ","ប្រវត្តិអាឡែស៊ី penicillin៖ ប្តូរថ្នាំ"],red:["SpO2 <90%, RR >30, ស្មារតីប្រែប្រួល, SBP <90 → ដេកពេទ្យ/ICU"]});
+mk("tb","ជំងឺឆ្លង","របេង (TB – drug-susceptible)","tuberculose",
+["2HRZE / 4HR (isoniazid 5, rifampicin 10, pyrazinamide 25, ethambutol 15 mg/kg/ថ្ងៃ) តាមកម្មវិធីជាតិ CENAT","Pyridoxine ជាមួយ isoniazid","DOT តាមដានការលេប"],
+{inv:["GeneXpert/Xpert MTB/RIF, CXR, HIV test, LFT, creatinine, glucose"],ae:["Hepatitis (ឈប់ថ្នាំបើ ALT >3× ជាមួយរោគសញ្ញា ឬ >5×)","Peripheral neuropathy (INH), optic neuritis (EMB), រមាស់/កន្ទួល"],com:["HIV, ទឹកនោមផ្អែម, ជំងឺថ្លើម/តម្រងនោម៖ កែតាមគោលការណ៍","Rifampicin ធ្វើអន្តរកម្មថ្នាំច្រើន (ថ្នាំពន្យារកំណើត, warfarin, ARV)"],red:["ក្អកឈាមច្រើន, ដកដង្ហើមខ្លី, ជាំលឿង, ប្រតិកម្មថ្នាំធ្ងន់"],ddi:["Rifampicin ↓ កម្រិតថ្នាំជាច្រើន (hormonal contraceptive, warfarin, ARV, sulfonylurea)"]});
+mk("asthma","ផ្លូវដង្ហើម","ហឺត (Asthma – acute exacerbation)","asthme",
+["Salbutamol neb/MDI ម្តងហើយម្តងទៀត ក្នុង ១ម៉ោងដំបូង","Prednisolone 40–50 mg/ថ្ងៃ ៥–៧ថ្ងៃ (កុមារ 1–2 mg/kg)","ipratropium បន្ថែមបើធ្ងន់; អុកស៊ីសែនគោលដៅ SpO2 93–95%","រយៈពេលវែង៖ ICS ± LABA"],
+{ae:["Salbutamol៖ tremor, tachycardia, hypokalemia","Steroid៖ ឡើងគ្លុយកូស"],com:["ស្ត្រីមានផ្ទៃពោះ៖ បន្តព្យាបាលដូចធម្មតា","ទឹកនោមផ្អែម៖ តាមដានគ្លុយកូស"],red:["និយាយមិនចេញ, SpO2 <92%, ស្មារតីប្រែប្រួល, silent chest → ICU"]});
+mk("uri","ផ្លូវដង្ហើម","ផ្តាសាយ / រលាកផ្លូវដង្ហើមលើ (URTI)","cold rhume grippe",
+["ភាគច្រើនជាវីរុស – គ្មានអង់ទីប៊ីយ៉ូទិក","ព្យាបាលរោគសញ្ញា៖ paracetamol, ផឹកទឹក, saline nasal rinse","Pharyngitis៖ មើលធាតុ «រលាកបំពង់ក / Pharyngitis» (ផ្ទៀងផ្ទាត់ប្រភពរួច)"],
+{red:["ដកដង្ហើមពិបាក, ទឹកមាត់ហូរ/មិនអាចលេប, គ្រុន >៥ថ្ងៃ"]});
+mk("age","ក្រពះពោះវៀន","រាគរូស / Gastroenteritis (AGE)","diarrhée diarrhea",
+["ជំនួសទឹក៖ ORS ជាគោលដំបូង; IV Ringer's lactate បើខ្សោះជាតិទឹកធ្ងន់","កុមារ៖ zinc 20 mg/ថ្ងៃ ១០–១៤ថ្ងៃ (10 mg បើ <6 ខែ) – WHO","អង់ទីប៊ីយ៉ូទិក តែករណីរាគឈាម, cholera, គ្រុនខ្លាំង៖ cholera ពេញវ័យ doxycycline 300 mg តែមួយដង","បន្តបំបៅ/បរិភោគ"],
+{ae:["Loperamide ហាមក្នុងរាគឈាម/គ្រុន/កុមារតូច"],com:["ស្ត្រីមានផ្ទៃពោះ, មនុស្សចាស់៖ ខ្សោះជាតិទឹកលឿន"],red:["ខ្សោះជាតិទឹកធ្ងន់, រាគឈាម, ក្អួតមិនឈប់, ស្មារតីប្រែប្រួល, មិនមានទឹកនោម"]});
+mk("gerd","ក្រពះពោះវៀន","ក្រពះ / ចុកឆ្អល់ / GERD / Dyspepsia","gastrite reflux ចុកឆ្អល់ gastritis",
+["Omeprazole 20 mg/ថ្ងៃ មុនអាហារ ៤–៨សប្តាហ៍","Antacid ពេលមានរោគសញ្ញា","H. pylori បើបញ្ជាក់៖ PPI + amoxicillin + clarithromycin ១៤ថ្ងៃ (តាមភាពស៊ាំតំបន់)","ជៀសវាង NSAIDs, ស្រា, បារី"],
+{ae:["PPI រយៈពេលវែង៖ ខ្វះ Mg/B12, ហានិភ័យបាក់ឆ្អឹង"],red:["ក្អួតឈាម/លាមកខ្មៅ, ស្រកទម្ងន់, លេបពិបាក, ស្លេកស្លាំង, អាយុ >50 ថ្មីៗ → endoscopy"]});
+mk("uti","តម្រងនោម","ឆ្លងមេរោគប្រព័ន្ធទឹកនោម (UTI)","cystite pyélonéphrite",
+["Cystitis មិនស្មុគស្មាញ៖ fosfomycin 3 g តែមួយដង ឬ nitrofurantoin 100 mg ២ដង/ថ្ងៃ ៥ថ្ងៃ (បើមាន)","Pyelonephritis៖ ceftriaxone 1 g IV/ថ្ងៃ ឬ ciprofloxacin ៧ថ្ងៃ តាម culture","កំណត់ថ្នាំតាម urine culture (ភាពស៊ាំខ្ពស់)"],
+{inv:["Urinalysis, urine culture, creatinine; ultrasound បើ pyelonephritis"],ae:["Fluoroquinolone៖ tendinopathy, QT","Nitrofurantoin ជៀសវាងបើ eGFR <30"],com:["ស្ត្រីមានផ្ទៃពោះ៖ ព្យាបាលសូម្បីតែ asymptomatic bacteriuria; ជៀសវាង fluoroquinolone","បុរស/ស្មុគស្មាញ៖ ព្យាបាលយូរជាង"],red:["គ្រុនខ្លាំង+ឈឺចង្កេះ, ក្អួត, sepsis, ស្ត្រីមានផ្ទៃពោះ pyelonephritis → ដេកពេទ្យ"]});
+mk("htn","បេះដូង/មេតាបូលីក","លើសសម្ពាធឈាម (Hypertension)","HTA hypertension",
+["គោលដៅ <140/90 (WHO)","ជួរទី១៖ amlodipine 5–10 mg, ACEi/ARB (enalapril, losartan), thiazide-like (hydrochlorothiazide/indapamide)","ជំងឺតម្រងនោម/ទឹកនោមផ្អែម protein៖ ACEi/ARB","ផ្លាស់ប្តូររបៀបរស់នៅ: កាត់ក្តិត អំបិល, ហាត់ប្រាណ"],
+{inv:["Creatinine/eGFR, K+, glucose, lipid, urinalysis, ECG"],ae:["Amlodipine៖ ហើមជើង","ACEi៖ ក្អក, hyperK, angioedema","Thiazide៖ hypoNa/hypoK/ហ្គោត"],com:["<b>ស្ត្រីមានផ្ទៃពោះ៖ ហាម ACEi/ARB</b> – ប្រើ methyldopa, labetalol, nifedipine","CKD៖ តាមដាន K+ និង creatinine"],ddi:["ACEi/ARB + K-sparing/NSAIDs → hyperK/ខូចតម្រងនោម"],red:["BP ≥180/120 ជាមួយឈឺក្បាល/ឈឺទ្រូង/ស្រវាំងភ្នែក/ខ្សោយ → បន្ទាន់"]});
+mk("t2dm","បេះដូង/មេតាបូលីក","ទឹកនោមផ្អែមប្រភេទ២ (T2DM)","diabète diabetes",
+["Metformin 500 mg ១–២ដង/ថ្ងៃ ជាមួយអាហារ ឡើងដល់ 2 g/ថ្ងៃ","ជួរទី២៖ gliclazide, SGLT2i, DPP4i, insulin","HbA1c គោលដៅ ~7% (កែតាមអ្នកជំងឺ)"],
+{inv:["FBS/HbA1c, creatinine/eGFR, lipid, urine albumin, ភ្នែក, ជើង"],ae:["Metformin៖ រាគ/ចង្អោរ, ខ្វះ B12, lactic acidosis កម្រ","Sulfonylurea៖ hypoglycemia"],com:["eGFR <30៖ ឈប់ metformin","ស្ត្រីមានផ្ទៃពោះ៖ insulin","ACEi/ARB និង statin បន្ថែមតាមហានិភ័យ"],red:["DKA/HHS (ក្អួត, ស្មារតីប្រែ), គ្លុយកូស <70 ឬ >300 ជាមួយរោគសញ្ញា"]});
+mk("preecl","សម្ភព","Pre-eclampsia ធ្ងន់","prééclampsie",
+["MgSO4 (WHO)៖ loading 4 g IV 20% យឺត ១៥–២០នាទី + 10 g IM (5 g ក្នុងគូទម្ខាង) ជាបន្តបន្ទាប់ 5 g IM រៀងរាល់ 4 ម៉ោង រយៈពេល ២៤ម៉ោងក្រោយសម្រាល","ថ្នាំបន្ថយសម្ពាធ៖ labetalol, nifedipine, ឬ hydralazine; គោលដៅ <160/110","សម្រាលកូនជាដំណោះស្រាយ"],
+{ae:["MgSO4៖ ពិនិត្យ reflex, RR, ទឹកនោម; antidote calcium gluconate"],red:["ប្រកាច់ (eclampsia), HELLP, ឈឺក្បាល/ស្រវាំងភ្នែក, oliguria → បញ្ជូនបន្ទាន់"]});
+mk("ida","ឈាម / ស្ត្រី","ស្លេកស្លាំង ខ្វះជាតិដែក","anémie ferriprive",
+["Ferrous sulfate 60 mg elemental iron/ថ្ងៃ ± folic acid (ពេលមានផ្ទៃពោះ 30–60 mg ប្រចាំថ្ងៃ)","រកមូលហេតុ (ឈាមដំណាក់កាល, hookworm, មុខរបួស)"],
+{ae:["ចង្អោរ, ទល់លាមក, លាមកខ្មៅ"],red:["Hb <7, សញ្ញា heart failure, ហូរឈាមសកម្ម"]});
+mk("cellulitis","ស្បែក","រលាកជាលិកាស្បែក (Cellulitis)","",
+["Cloxacillin/dicloxacillin 500 mg ៤ដង/ថ្ងៃ ឬ cefalexin 500 mg ៤ដង/ថ្ងៃ ៥–៧ថ្ងៃ","ធ្ងន់៖ cloxacillin ឬ cefazolin IV; MRSA សង្ស័យ៖ ពិនិត្យថ្នាំ"],
+{red:["រីករាលដាលលឿន, necrosis, ឈឺខ្លាំង, sepsis"]});
+mk("gout","សន្លាក់","ហ្គោត (Acute gout)","goutte",
+["NSAID (naproxen/ibuprofen) ឬ colchicine 0.5 mg ២–៣ដង/ថ្ងៃ ឬ prednisolone 30–35 mg ៥ថ្ងៃ","Allopurinol ចាប់ផ្តើមក្រោយស្ងប់ 2 សប្តាហ៍"],
+{com:["CKD/ក្រពះ/ជំងឺបេះដូង៖ ជៀសវាង NSAID – ប្រើ steroid","កែ colchicine តាម eGFR"],ae:["Colchicine៖ រាគ, ពុលខ្ពស់ពេលលើសកម្រិត"]});
+mk("sx-fever","រោគសញ្ញា","គ្រុនក្តៅ (Fever)","fièvre",
+["Paracetamol 500–1000 mg រៀងរាល់ 6 ម៉ោង (≤3–4 g/ថ្ងៃ; ≤2–3 g បើថ្លើម/ស្រា)","កុមារ៖ 10–15 mg/kg/ដូស, ដាច់ 4–6 ម៉ោង, ≤4 ដូស/ថ្ងៃ","រកមូលហេតុ (dengue, malaria, UTI, pneumonia…)"],
+{ae:["ពុលថ្លើមពេលលើសកម្រិត"],com:["Dengue៖ ជៀសវាង NSAID/aspirin"],red:["គ្រុន >៥–៧ថ្ងៃ, ស្មារតីប្រែ, ក្រហមស្បែក petechiae, ទារក <3ខែ"]});
+mk("sx-pain","រោគសញ្ញា","ឈឺ (Pain / ឈឺក្បាល)","douleur headache",
+["Paracetamol ជួរទី១","NSAID (ibuprofen 400 mg ៣ដង/ថ្ងៃ ជាមួយអាហារ) បើគ្មានការហាម","Migraine៖ paracetamol/NSAID ± sumatriptan 50–100 mg; ± metoclopramide","ឈឺខ្លាំង៖ tramadol/ opioid តាមវិនិច្ឆ័យ"],
+{ae:["NSAID៖ ក្រពះ, តម្រងនោម, ឡើងសម្ពាធ"],com:["មានផ្ទៃពោះ៖ paracetamol; ជៀសវាង NSAID ត្រីមាសទី៣","CKD/ក្រពះ/ហូរឈាម/dengue៖ ជៀសវាង NSAID"],red:["ឈឺក្បាល thunderclap, គ្រុន+ក/ក្បាលរឹង, ខ្សោយសរសៃប្រសាទ"]});
+mk("sx-cough","រោគសញ្ញា","ក្អក (Cough)","toux",
+["រកមូលហេតុ (TB បើ >២សប្តាហ៍, asthma, GERD, ACEi)","ទឹកឃ្មុំ/ទឹកក្តៅ; ថ្នាំរំងាប់ក្អកខ្លីៗបើក្អកស្ងួតរំខាន","Expectorant ភស្តុតាងតិច"],
+{red:["ក្អកឈាម, >២សប្តាហ៍, ស្រកទម្ងន់, ដកដង្ហើមខ្លី → ពិនិត្យ TB"]});
+mk("sx-vomit","រោគសញ្ញា","ចង្អោរ / ក្អួត","nausée vomissement",
+["ជំនួសទឹក (ORS ចូលតិចៗ)","Ondansetron 4–8 mg ឬ metoclopramide 10 mg ៣ដង/ថ្ងៃ (≤៥ថ្ងៃ)"],
+{ae:["Ondansetron៖ QT; Metoclopramide៖ extrapyramidal"],com:["មានផ្ទៃពោះ៖ ជួរទី១ pyridoxine ± doxylamine"],red:["ក្អួតឈាម, ឈឺពោះធ្ងន់, ខ្សោះជាតិទឹក"]});
+mk("sx-allergy","រោគសញ្ញា","រមាស់ / អាឡែស៊ី / Urticaria","allergie urticaire",
+["Cetirizine 10 mg/ថ្ងៃ ឬ loratadine 10 mg/ថ្ងៃ (ជួរទី១ non-sedating)","Chlorphenamine 4 mg ៦–៨ម៉ោង (ងងុយ)","Steroid ខ្លីបើធ្ងន់","Anaphylaxis៖ adrenaline IM 0.5 mg (មនុស្សធំ) ភ្លាមៗ"],
+{red:["ហើមបបូរមាត់/អណ្តាត, ដកដង្ហើមខ្លី, ភាពធ្លាក់សម្ពាធ → anaphylaxis"]});
+mk("sx-constip","រោគសញ្ញា","ទល់លាមក","constipation",
+["ជាតិសរសៃ/ទឹក","Lactulose 15–30 ml/ថ្ងៃ ឬ macrogol; bisacodyl ខ្លីៗ"],{red:["ឈាមលាមក, ស្រកទម្ងន់, ឈឺពោះធ្ងន់"]});
+
+mk("pharyngitis","ផ្លូវដង្ហើម","រលាកបំពង់ក / Pharyngitis (Pharyngite)","pharyngite sore throat tonsillitis angine",
+["ភាគច្រើនជាវីរុស (ក្នុងប្រទេសកំពុងអភិវឌ្ឍ ~១/៣ ជា GAS) ហើយសញ្ញាគ្លីនិកតែឯងមិនអាចបែងចែក GAS ពីវីរុសបានច្បាស់ទេ (លើកលែង scarlet-fever rash) – ប្រើ Centor/McIsaac ឬ RADT បើមាន",
+ "<b>មិនមែនគ្រប់ករណីត្រូវការអង់ទីប៊ីយ៉ូទិក៖</b> NICE/RCH ណែនាំថាភាគច្រើនជាប់ខ្លួនឯង ព្យាបាលរោគសញ្ញា; អង់ទីប៊ីយ៉ូទិកសម្រាប់ Centor/FeverPAIN ខ្ពស់ ឬក្រុមហានិភ័យខ្ពស់ (ហានិភ័យ ARF/RHD ក្នុងតំបន់ endemic)។ ការណែនាំពីប្រទេសហានិភ័យទាប មិនសមស្របនឹងតំបន់ ARF ខ្ពស់ (rhdaction)",
+ "<b>ពេញវ័យ (ជួរទី១)៖</b> phenoxymethylpenicillin 500 mg ៤ដង/ថ្ងៃ ឬ 1 g ២ដង/ថ្ងៃ រយៈពេល ៥–១០ថ្ងៃ (NICE); ១០ថ្ងៃ សម្រាប់តំបន់ ARF endemic",
+ "<b>កុមារ៖</b> phenoxymethylpenicillin 15 mg/kg (≤500 mg) ២ដង/ថ្ងៃ ១០ថ្ងៃ; ឬ amoxicillin 50 mg/kg (≤1 g) ម្តង/ថ្ងៃ ១០ថ្ងៃ (RCH); បើមិនអាចធានាការលេប៖ benzathine penicillin IM តែមួយដង (ពេញវ័យទូទៅ 1.2 MU – ផ្ទៀងផ្ទាត់ដូស)",
+ "WHO AWaRe៖ amoxicillin 500 mg ៨ម៉ោង ជាជួរទី១ ក្នុងរលាកផ្លូវដង្ហើមមួយចំនួន (ផ្ទៀងផ្ទាត់ទំព័រ Pharyngitis ក្នុងឯកសារ AWaRe ជំនាន់ចុងក្រោយ)",
+ "ព្យាបាលរោគសញ្ញា៖ paracetamol/ibuprofen; steroid តែមួយដងអាចជួយឈឺ (RCH៖ dexamethasone 0.15 mg/kg ≤10 mg ឬ prednisolone 1 mg/kg ≤50 mg) តាមវិនិច្ឆ័យ"],
+{inv:["Centor/McIsaac score; RADT/throat swab បើមាន","ស្ងប់ស្ងាត់បើសង្ស័យ diphtheria: ស្រោមពណ៌ប្រផេះ (pseudomembrane) → រាយការណ៍/បញ្ជូន"],
+ ae:["Penicillin៖ កន្ទួល, anaphylaxis (ពិនិត្យប្រវត្តិអាឡែស៊ី)","Amoxicillin ក្នុង EBV/mononucleosis៖ កន្ទួល (ជៀសវាងបើសង្ស័យ)"],
+ com:["អាឡែស៊ី penicillin៖ ប្រើថ្នាំជំនួស (macrolide/cephalosporin) តាមគោលការណ៍ជាតិ","ប្រវត្តិ ARF/RHD, តំបន់ endemic៖ ព្យាបាល GAS ពេញ ១០ថ្ងៃ/benzathine"],
+ red:["ពិបាកដកដង្ហើម/stridor, មិនអាចលេប/ទឹកមាត់ហូរ, trismus, សំឡេង «hot potato», ក/ក្បាលរឹង → peritonsillar/retropharyngeal abscess, epiglottitis","គ្រុនខ្លាំង >៥ថ្ងៃ, ប្រព័ន្ធខ្សោយ, pseudomembrane (diphtheria)"],
+ src:["NICE sore throat (acute): antimicrobial prescribing (ដូសពេញវ័យ)","RCH Melbourne – Sore Throat (ដូសកុមារ)","WHO AWaRe antibiotic book (draft v1.1 2021 – ពិនិត្យជំនាន់ចុងក្រោយ)","RHD Action – pharyngitis in ARF-endemic settings","<b>CNM/MoH កម្ពុជា៖ មិនទាន់រកឃើញអត្ថបទ pharyngitis ជាក់លាក់ – ត្រូវផ្ទៀងផ្ទាត់ជាមួយ CPG ក្រសួងសុខាភិបាល (មាន CPG Pediatrics ធ្នូ ២០២៥)</b>"]});
+mk("dyslip","បេះដូង/មេតាបូលីក","លើសខ្លាញ់ក្នុងឈាម (Dyslipidemia)","cholesterol triglyceride LDL hyperlipidémie",
+["វាយតម្លៃហានិភ័យបេះដូង-សរសៃឈាម (សម្ពាធឈាម, ទឹកនោមផ្អែម, បារី, អាយុ, ប្រវត្តិគ្រួសារ) មុនសម្រេចប្រើថ្នាំ","ផ្លាស់ប្តូររបៀបរស់នៅជាមូលដ្ឋាន៖ កាត់ខ្លាញ់ឆ្អែត/ស្ករ/ស្រា, ហាត់ប្រាណ, បន្ថយទម្ងន់","Statin ជួរទី១ (LDL ↑)៖ atorvastatin 10–40 mg ម្តង/ថ្ងៃ (ល្ងាច); ខ្ពស់ជាងសម្រាប់ហានិភ័យខ្ពស់/ASCVD","Triglyceride ខ្ពស់ខ្លាំង (>5.6 mmol/L ≈ 500 mg/dL)៖ ព្យាបាលបន្ទាន់ ដើម្បីការពារ pancreatitis – fenofibrate ក្រោយកែរបបអាហារ; ezetimibe 10 mg បន្ថែមបើ LDL មិនដល់គោលដៅ"],
+{inv:["Lipid profile (ញាំអត់ឬមិនអត់), glucose/HbA1c, TSH, creatinine/UA protein, LFT មុនចាប់ផ្តើម statin","រកមូលហេតុបន្ទាប់បន្សំ៖ hypothyroid, ទឹកនោមផ្អែម, nephrotic, ស្រា, ថ្នាំ"],
+ ae:["Statin៖ ឈឺសាច់ដុំ (myopathy – ពិនិត្យ CK បើមានរោគសញ្ញាធ្ងន់), ALT ឡើង, ទឹកនោមផ្អែមថ្មីកម្រិតតិច","Fibrate៖ ធ្វើអន្តរកម្មជាមួយ statin (myopathy)"],
+ com:["<b>មានផ្ទៃពោះ/បំបៅ៖ ហាម statin</b>","ជំងឺថ្លើមសកម្ម៖ ជៀសវាង; CKD៖ កែតាមថ្នាំ"],
+ ddi:["Statin + clarithromycin/azole/cyclosporine/fibrate → ហានិភ័យ myopathy"],
+ red:["ឈឺសាច់ដុំខ្លាំង + ទឹកនោមខ្មៅ (rhabdomyolysis), TG >10 mmol/L ឬឈឺពោះខ្លាំង (pancreatitis)"]});
+mk("hyperuric","សន្លាក់","អាសុីតអ៊ុយរិកខ្ពស់ (Hyperuricemia)","uric acid acide urique",
+["Uric acid ខ្ពស់តែគ្មានរោគសញ្ញា៖ ជាទូទៅ <b>មិនចាំបាច់ប្រើថ្នាំបន្ថយ uric</b> – កែរបបអាហារ (ស្រាបៀរ, សាច់ក្រហម/សរីរាង្គ, ផ្លែឈើផ្អែម), ទម្ងន់, ទឹកឲ្យបានគ្រប់គ្រាន់","ពិចារណា allopurinol (ចាប់ផ្តើម 100 mg/ថ្ងៃ; 50 mg បើ CKD) ពេល gout កើតម្តងហើយម្តងទៀត, tophi, ថ្មតម្រងនោម, ឬ CKD; គោលដៅ uric <6 mg/dL (360 µmol/L)","ពិនិត្យថ្នាំដែលបង្កើន uric (thiazide, aspirin ដូសទាប) និងជំងឺអម (HTN, dyslipidemia, ទឹកនោមផ្អែម, CKD)"],
+{inv:["Uric acid, creatinine/eGFR, urinalysis, lipid, glucose"],ae:["Allopurinol៖ កន្ទួល/hypersensitivity (ឈប់ភ្លាមៗ), ចាប់ផ្តើមទាបដើម្បីកាត់បន្ថយ gout flare – ប្រើ colchicine/NSAID ការពារ"],red:["ហើមក្តៅឈឺសន្លាក់ស្រួចស្រាវ (ទៅធាតុ Gout), ឈឺចង្កេះ + នោមឈាម (ថ្មតម្រងនោម)"]});
+mk("headache","រោគសញ្ញា","ឈឺក្បាល (Tension / Migraine)","headache céphalée migraine",
+["Tension-type៖ paracetamol 1 g ឬ ibuprofen 400 mg ពេលឈឺ; គ្រប់គ្រងភាពតានតឹង/ដេក/ទឹក","Migraine៖ NSAID/paracetamol ± metoclopramide 10 mg; triptan (sumatriptan 50–100 mg) បើមិនបានលទ្ធផល; ការពារ៖ propranolol ឬ amitriptyline 10–25 mg ពេលយប់ តាមវិនិច្ឆ័យ","វាស់ BP ជានិច្ច – ឈឺក្បាល + BP ខ្ពស់ខ្លាំង → ព្យាបាល HTN","ជៀសវាង medication-overuse (ថ្នាំឈឺ >១០–១៥ ថ្ងៃ/ខែ)"],
+{inv:["BP, សញ្ញាប្រសាទ, ភ្នែក; តាមវិនិច្ឆ័យ៖ CBC, CT/MRI បើមាន red flags"],ae:["NSAID៖ ក្រពះ/តម្រងនោម","Triptan៖ ហាមបើជំងឺសរសៃឈាមបេះដូង/HTN គ្មានការគ្រប់គ្រង","Propranolol៖ asthma ហាម"],com:["មានផ្ទៃពោះ៖ paracetamol ជាជួរទី១; ជៀសវាង NSAID ត្រីមាសទី៣"],red:["Thunderclap, ឈឺថ្មីអាយុ >50, គ្រុន+ក/ក្បាលរឹង, ខ្សោយសរសៃប្រសាទ/ប្រកាច់/ស្មារតីប្រែ, ក្រោយរបួស, មានផ្ទៃពោះ+BP ខ្ពស់ (pre-eclampsia) → បន្ទាន់"]});
+mk("renalcolic","តម្រងនោម","ថ្មតម្រងនោម / Renal colic","kidney stone urolithiasis colique néphrétique",
+["បន្ធូរឈឺ៖ NSAID ជាជួរទី១ (diclofenac 50 mg លេប ឬ 75 mg IM), paracetamol; opioid បើមិនគ្រប់គ្រាន់","ទឹកឲ្យគ្រប់គ្រាន់; ថ្មតូច (<5 mm) ភាគច្រើនចេញដោយខ្លួនឯង; tamsulosin 0.4 mg ម្តង/ថ្ងៃ អាចពិចារណាសម្រាប់ថ្ម ureter ចុង (ភស្តុតាងចម្រុះ)","Urology បើថ្មធំ/មិនចេញ/រារាំង"],
+{inv:["Urinalysis (haematuria), creatinine, ultrasound ± KUB/CT, CBC បើមានគ្រុន","Urine culture បើសង្ស័យឆ្លង"],ae:["NSAID៖ ជៀសវាងបើ eGFR ទាប/ក្រពះ/មានផ្ទៃពោះ"],com:["មានផ្ទៃពោះ៖ ជៀសវាង NSAID/CT – ultrasound; ព្យាបាលដោយ urology/OB","តម្រងនោមតែមួយ/CKD៖ ដេកពេទ្យ"],red:["គ្រុន+ឈឺចង្កេះ (infected obstructed kidney = បន្ទាន់), anuria, ឈឺមិនធូរ, ក្អួតមិនឈប់"]});
+mk("lbp","សន្លាក់","ឈឺខ្នងក្រោម / ចង្កេះ និងឈឺសាច់ដុំ (Low back pain / Myalgia)","lombalgie back pain myalgia muscle",
+["ភាគច្រើនជា mechanical ជាប់ខ្លួនឯង ១–៦ សប្តាហ៍; ណែនាំបន្តសកម្មភាព មិនដេកសម្រាកយូរ","Paracetamol ឬ NSAID រយៈពេលខ្លី (ibuprofen 400 mg ៣ដង/ថ្ងៃ ជាមួយអាហារ); បន្ធូរសាច់ដុំខ្លីៗតាម formulary; កម្តៅ/ម៉ាស្សារួមបញ្ចូល","Myalgia៖ រកមូលហេតុ – ឆ្លងវីរុស (dengue/ផ្តាសាយ), statin, ខ្វះ electrolyte, hypothyroid, ហាត់ប្រាណហួស"],
+{inv:["មិនចាំបាច់ imaging ករណី mechanical គ្មាន red flags; តាមវិនិច្ឆ័យ៖ CBC/ESR/CRP, creatinine, urinalysis, X-ray/MRI"],ae:["NSAID៖ ក្រពះ/តម្រងនោម/HTN","Muscle relaxant៖ ងងុយ"],com:["មានផ្ទៃពោះ៖ paracetamol, ហាត់ប្រាណស្រាល","ឈឺចង្កេះចំហៀង + នោមឈឺ/ឈាម/គ្រុន → គិត UTI/pyelonephritis/ថ្មតម្រងនោម មិនមែន mechanical"],red:["ខ្សោយជើង, ស្ពឹក saddle/កន្ទុយ, ទឹកនោម/លាមកមិនគ្រប់គ្រង (cauda equina), គ្រុន, របួស, ប្រវត្តិមហារីក, ស្រកទម្ងន់, ឈឺយប់ មិនធូរ"]});
+mk("abdpain","រោគសញ្ញា","ឈឺពោះ (Abdominal pain – វិធីសាស្ត្រ)","douleur abdominale",
+["ចាត់តាមទីតាំង៖ epigastric (gastritis/GERD/PUD), RUQ (ថ្លើម/ទឹកប្រមាត់), RLQ (appendicitis), suprapubic (UTI), flank (ថ្មតម្រងនោម), ស្ត្រីវ័យបន្តពូជ៖ គិត ectopic pregnancy ជានិច្ច","Cramp/colic ស្រាល៖ hyoscine butylbromide 10–20 mg ៣–៤ដង/ថ្ងៃ (ហាមបើបំពង់ពោះវៀនស្ទះ)","Epigastric៖ omeprazole 20 mg (ទៅធាតុ GERD)","រាគ៖ ទៅធាតុ AGE; ក្តៅ+ឈឺពោះ៖ គិត dengue/typhoid"],
+{inv:["ស្ត្រីវ័យបន្តពូជ៖ pregnancy test","Urinalysis, CBC, glucose; តាមវិនិច្ឆ័យ៖ amylase/lipase, LFT, ultrasound, CXR/AXR"],ae:["ជៀសវាង NSAID បើសង្ស័យ dengue/ក្រពះហូរឈាម"],red:["ពោះរឹង/rebound (peritonitis), ឈឺកើនខ្លាំង, ក្អួតមិនឈប់/ទល់, ហូរឈាម, shock, ស្ត្រីមានផ្ទៃពោះ/រលូតកូនសង្ស័យ, ឈឺពោះ+ក្តៅ+ជាំលឿង → បន្ទាន់"]});
+mk("freq","តម្រងនោម","នោមញឹក / នោមឈឺ (Urinary frequency & dysuria)","frequency polyuria nocturia pollakiuria",
+["ពិនិត្យ urinalysis + គ្លុយកូស ជាដំបូង៖ UTI (ទៅធាតុ UTI), ទឹកនោមផ្អែម (ទៅធាតុ T2DM), ថ្ម","បុរសវ័យចាស់ + ហូរខ្សោយ/ក្រោកយប់៖ គិត BPH – alpha-blocker (tamsulosin 0.4 mg) តាមវិនិច្ឆ័យ ក្រោយពិនិត្យ prostate","ថ្នាំបង្កើនទឹកនោម (diuretic), កាហ្វេ/ស្រា, មានផ្ទៃពោះ, STI (នោមឈឺ មានទឹករំអិល)"],
+{inv:["Urinalysis, urine culture, glucose, creatinine, ultrasound ± PVR; បុរស >50៖ PSA តាមការពិភាក្សា"],com:["មានផ្ទៃពោះ៖ ព្យាបាល asymptomatic bacteriuria; ជៀសវាង fluoroquinolone"],red:["គ្រុន+ឈឺចង្កេះ, នោមមិនចេញ (retention), នោមឈាមឥតឈឺ, STI សង្ស័យ"]});
+const NM={dengue:["Dengue fever","Dengue"],malaria:["Malaria","Paludisme"],typhoid:["Typhoid fever","Fièvre typhoïde"],cap:["Community-acquired pneumonia","Pneumonie communautaire"],tb:["Tuberculosis","Tuberculose"],asthma:["Asthma","Asthme"],dyslip:["Dyslipidaemia","Dyslipidémie"],hyperuric:["Hyperuricaemia","Hyperuricémie"],headache:["Headache (tension / migraine)","Céphalée (tension / migraine)"],renalcolic:["Renal colic / kidney stones","Colique néphrétique / lithiase"],lbp:["Low back pain / myalgia","Lombalgie / myalgie"],abdpain:["Abdominal pain (approach)","Douleur abdominale (démarche)"],freq:["Urinary frequency / dysuria","Pollakiurie / dysurie"],pharyngitis:["Pharyngitis / sore throat","Pharyngite / angine"],uri:["Upper respiratory infection / common cold","Infection respiratoire haute / rhume"],age:["Acute gastroenteritis / diarrhoea","Gastro-entérite aiguë / diarrhée"],gerd:["GERD / dyspepsia","RGO / dyspepsie"],uti:["Urinary tract infection","Infection urinaire"],htn:["Hypertension","Hypertension artérielle"],t2dm:["Type 2 diabetes","Diabète de type 2"],preecl:["Severe pre-eclampsia","Prééclampsie sévère"],ida:["Iron-deficiency anaemia","Anémie ferriprive"],cellulitis:["Cellulitis","Cellulite infectieuse"],gout:["Acute gout","Crise de goutte"],"sx-fever":["Fever","Fièvre"],"sx-pain":["Pain / headache","Douleur / céphalée"],"sx-cough":["Cough","Toux"],"sx-vomit":["Nausea / vomiting","Nausées / vomissements"],"sx-allergy":["Itch / allergy / urticaria","Prurit / allergie / urticaire"],"sx-constip":["Constipation","Constipation"]};
+DEFAULT.forEach(d=>{const n=NM[d.id];if(n){d.en=n[0];d.fr=n[1];d.alt=(d.alt||"")+" "+n[0]+" "+n[1]}});
+
+DEFAULT[0].i18n={
+en:{def:["WHO management groups: A (outpatient), B (warning signs / comorbidity / social risk → admit), C (shock, severe bleeding, organ failure)","Warning signs: persistent vomiting, fluid accumulation (ascites/pleural effusion), mucosal bleeding, hepatomegaly >2 cm, postural hypotension, lethargy/agitation, rising Hct"],
+inv:["CBC + platelets + Hct before IV fluids (Group B/C); monitor Hct before and after fluids","LFT – if AST/ALT ≥10× ULN, avoid paracetamol (MSF)","NS1/IgM as available; Group C: lactate, creatinine, glucose, ECG/ultrasound as needed"],
+tx:["<b>Group A (outpatient):</b> rest, ORS/oral fluids (avoid sports drinks), paracetamol 10 mg/kg/dose, max 3–4 times/day in children and ≤3 g/day in adults; tepid sponging if high fever. Daily review.","<b>Group B (inpatient):</b> monitor vitals, fluid in/out and urine output (target ≥0.5 ml/kg/h adults, ≥1 ml/kg/h children); IV crystalloid (Ringer's lactate) per protocol if needed.","<b>Group C (emergency):</b> crystalloid boluses per WHO/national protocol; if no improvement after 3 boluses → severe, ICU; transfuse only for significant bleeding or failure to respond to fluids.","<b>WHO 2025 (arboviral):</b> protocolised oral fluids; paracetamol or metamizole for pain/fever; crystalloids, not colloids; monitor capillary refill time and lactate.","Exact Group B/C IV fluid rates (ml/kg/h) → <i>complete from latest Cambodian national guideline</i>"],
+ae:["Paracetamol: hepatotoxicity in overdose","<b>Avoid NSAIDs/aspirin</b> (bleeding risk) – general practice; verify","Fluid overload with excessive/late-reduced fluids"],
+com:["Liver: AST/ALT ≥10× ULN → no paracetamol","Kidney: adjust paracetamol per WHO Table 4-3","Pregnancy, infants, elderly, diabetes, hypertension: treat as Group B and monitor closely","Use lower of actual/ideal body weight for fluid calculation"],
+ddi:["Avoid NSAIDs, aspirin, anticoagulants if possible"],
+red:["Severe abdominal pain, persistent vomiting, bleeding, lethargy/confusion","Cold extremities, weak pulse, narrow pulse pressure, dyspnoea","Rising Hct with rapidly falling platelets → admit"]},
+fr:{def:["Groupes OMS : A (ambulatoire), B (signes d'alarme / comorbidité / contexte social → hospitaliser), C (choc, hémorragie sévère, atteinte d'organe)","Signes d'alarme : vomissements persistants, épanchement (ascite/pleural), saignement muqueux, hépatomégalie >2 cm, hypotension orthostatique, léthargie/agitation, Hct en hausse"],
+inv:["NFS + plaquettes + Hct avant la perfusion (Groupe B/C) ; suivre l'Hct avant et après remplissage","Bilan hépatique – si ASAT/ALAT ≥10× LSN, éviter le paracétamol (MSF)","NS1/IgM selon disponibilité ; Groupe C : lactate, créatinine, glycémie, ECG/échographie selon besoin"],
+tx:["<b>Groupe A (ambulatoire) :</b> repos, SRO/hydratation orale (éviter les boissons énergétiques), paracétamol 10 mg/kg/dose, max 3–4 fois/jour chez l'enfant et ≤3 g/jour chez l'adulte ; épongeage tiède si fièvre élevée. Réévaluation quotidienne.","<b>Groupe B (hospitalisation) :</b> surveiller constantes, entrées/sorties et diurèse (cible ≥0,5 ml/kg/h adulte, ≥1 ml/kg/h enfant) ; cristalloïde IV (Ringer lactate) selon protocole si nécessaire.","<b>Groupe C (urgence) :</b> bolus de cristalloïdes selon protocole OMS/national ; absence d'amélioration après 3 bolus → forme sévère, réanimation ; transfusion seulement si saignement important ou échec du remplissage.","<b>OMS 2025 (arboviroses) :</b> hydratation orale protocolisée ; paracétamol ou métamizole pour douleur/fièvre ; cristalloïdes et non colloïdes ; surveiller le temps de recoloration capillaire et le lactate.","Débits IV précis Groupe B/C (ml/kg/h) → <i>à compléter selon le guide national cambodgien le plus récent</i>"],
+ae:["Paracétamol : hépatotoxicité en cas de surdosage","<b>Éviter AINS/aspirine</b> (risque hémorragique) – pratique générale ; à vérifier","Surcharge hydrique en cas de remplissage excessif/réduction tardive"],
+com:["Foie : ASAT/ALAT ≥10× LSN → pas de paracétamol","Rein : adapter le paracétamol (OMS, tableau 4-3)","Grossesse, nourrisson, sujet âgé, diabète, HTA : traiter comme Groupe B et surveiller de près","Utiliser le plus faible du poids réel/idéal pour le calcul des fluides"],
+ddi:["Éviter si possible AINS, aspirine, anticoagulants"],
+red:["Douleur abdominale intense, vomissements persistants, saignement, léthargie/confusion","Extrémités froides, pouls faible, pression pulsée étroite, dyspnée","Hct en hausse avec plaquettes en chute rapide → hospitaliser"]}};
+const UI={km:{ph:"ស្វែងរកជំងឺ… (Khmer / English / French)",web:"🌐 ស្វែងរកក្នុង Internet (ខ្មែរ · EN · FR)",ed:"✎ កែ / បន្ថែម JSON",src:"ប្រភព",ver:"ផ្ទៀងផ្ទាត់ចុងក្រោយ",fb:"",disc:"ឧបករណ៍ជំនួយប៉ុណ្ណោះ។ គ្រូពេទ្យត្រូវផ្ទៀងផ្ទាត់ជាមួយ guideline ចុងក្រោយ មុនប្រើ។",
+S:{def:"និយមន័យ / ចំណាត់ថ្នាក់",inv:"ការពិនិត្យអម",tx:"ការព្យាបាល",ae:"ផលរំខាន",com:"ជំងឺអម / ក្រុមពិសេស",ddi:"ទំនាក់ទំនងថ្នាំ",red:"Red flags / ពេលត្រូវ admit ឬបញ្ជូន"}},
+en:{ph:"Search disease… (Khmer / English / French)",web:"🌐 Search the Internet (KM · EN · FR)",ed:"✎ Edit / add JSON",src:"Sources",ver:"Last verified",fb:"Not yet translated – showing Khmer.",disc:"Decision-support aid only. Verify against the latest guidelines before use.",
+S:{def:"Definition / classification",inv:"Investigations",tx:"Treatment",ae:"Adverse effects",com:"Comorbidities / special populations",ddi:"Drug interactions",red:"Red flags / when to admit or refer"}},
+fr:{ph:"Rechercher une maladie… (Khmer / English / Français)",web:"🌐 Rechercher sur Internet (KM · EN · FR)",ed:"✎ Modifier / ajouter JSON",src:"Sources",ver:"Dernière vérification",fb:"Pas encore traduit – affichage en khmer.",disc:"Outil d'aide uniquement. Vérifier avec les dernières recommandations avant usage.",
+S:{def:"Définition / classification",inv:"Examens complémentaires",tx:"Traitement",ae:"Effets indésirables",com:"Comorbidités / populations particulières",ddi:"Interactions médicamenteuses",red:"Signes d'alerte / quand hospitaliser ou référer"}}};
+let LANG=localStorage.getItem("mg_lang")||"km";
+function setLang(l){LANG=l;try{localStorage.setItem("mg_lang",l)}catch(e){}
+ const u=UI[l];document.getElementById("q").placeholder=u.ph;document.getElementById("wb").title=u.web;document.getElementById("gear").textContent="⚙ "+l.toUpperCase();document.getElementById("eb").textContent=u.ed;document.getElementById("dc").textContent=u.disc;
+ document.querySelectorAll(".lg").forEach(b=>b.classList.toggle("p",b.dataset.l===l));render();if(typeof dx==="function")dx();if(typeof loc==="function")loc()}
+const FX=[
+["រោគសញ្ញា",[["fever","ក្តៅខ្លួន Fever"],["fever5","ក្តៅ >៥ថ្ងៃ"],["headache","ឈឺក្បាល"],["myalgia","ឈឺសាច់ដុំ"],["rash","កន្ទួល"],["cough","ក្អក"],["cough2w","ក្អក >២សប្តាហ៍"],["hemoptysis","ក្អកឈាម"],["dyspnea","ដកដង្ហើមខ្លី"],["wheeze","ដង្ហើមហឺ Wheeze"],["sorethroat","ឈឺបំពង់ក"],["rhinorrhea","ហៀរសម្បោរ/ច្រមុះស្ទះ"],["vomit","ក្អួត/ចង្អោរ"],["diarrhea","រាគ"],["bloodydiar","រាគឈាម"],["abdpain","ឈឺពោះ"],["epigastric","ចុកឆ្អល់/ឆេះ epigastric"],["constip","ទល់លាមក"],["dysuria","នោមឈឺ"],["flank","ឈឺចង្កេះ ចំហៀង (តម្រងនោម)"],["lowback","ឈឺខ្នងក្រោម/ចង្កេះ"],["freq","នោមញឹក"],["hematuria","នោមឈាម"],["polyuria","នោមច្រើន/ស្រេកទឹក"],["itch","រមាស់/Urticaria"],["jointacute","ហើមឈឺសន្លាក់ស្រួចស្រាវ"],["skinred","ស្បែកក្រហម ក្តៅ ហើម"],["pallor","ស្លេក/ហត់ងាយ"],["wtloss","ស្រកទម្ងន់"],["nightsweat","បែកញើសយប់"],["pregnant","មានផ្ទៃពោះ ≥20សប្តាហ៍"]]],
+["សញ្ញា / ការពិនិត្យអម",[["highbp","BP ≥140/90"],["thrombo","Platelet ទាប"],["leuko","WBC ទាប"],["hct","Hct កើន"],["ns1","NS1/IgM Dengue +"],["rdtmal","RDT/Film Malaria +"],["pyuria","Pyuria/Nitrite +"],["hyperglyc","គ្លុយកូសខ្ពស់"],["protein","Proteinuria"],["microHb","Hb ទាប microcytic"],["uric","Uric acid ខ្ពស់ (អាសុីត)"],["lipid","ខ្លាញ់ក្នុងឈាមខ្ពស់ (LDL/TG)"],["cxr","CXR infiltrate"]]],["សញ្ញា Positive (ពិនិត្យរាងកាយ)",[["tourniq","Tourniquet test +"],["cva","CVA tenderness + (គោះចង្កេះ)"],["rebound","ពោះរឹង/Rebound +"],["murphy","Murphy's sign +"],["neck","ក/ក្បាលរឹង (Kernig/Brudzinski +)"],["crackles","Crackles ក្នុងសួត"],["exudate","Tonsil exudate/ក្រហមខ្លាំង"],["hepato","ថ្លើមធំ"],["jaundice","ជាំលឿង"],["slr","SLR +"],["tophi","Tophi/សន្លាក់ក្រហមក្តៅ"],["edema","ហើមជើង Pitting"],["rovsing","Rovsing/Psoas/Obturator +"],["cullen","Cullen/Grey Turner"],["jvp","JVP ខ្ពស់"],["clubbing","Clubbing"],["crt","CRT >2វិ / Pulse pressure តូច"]]]];
+const FMAP={
+dengue:{fever:1,headache:1,myalgia:1,rash:1,vomit:1,abdpain:1,thrombo:2,leuko:1,hct:2,ns1:3},
+malaria:{fever:1,headache:1,myalgia:1,vomit:1,rdtmal:3,pallor:1,thrombo:1},
+typhoid:{fever:1,fever5:2,headache:1,abdpain:1,constip:1,diarrhea:1,rash:1,leuko:1},
+cap:{fever:1,cough:1,dyspnea:2,cxr:3},
+tb:{cough2w:3,hemoptysis:2,wtloss:1,nightsweat:2,fever:1,cxr:1},
+asthma:{wheeze:3,cough:1,dyspnea:2},
+pharyngitis:{sorethroat:3,fever:1,headache:1},
+uri:{cough:1,sorethroat:1,rhinorrhea:3,fever:1},
+age:{diarrhea:3,vomit:1,abdpain:1,fever:1,bloodydiar:2},
+gerd:{epigastric:3,vomit:1,abdpain:1},
+uti:{dysuria:3,flank:2,fever:1,pyuria:3},
+htn:{highbp:3,headache:1},
+t2dm:{polyuria:3,hyperglyc:3,wtloss:1,pallor:0.5},
+preecl:{highbp:2,pregnant:3,protein:3,headache:1},
+ida:{pallor:3,microHb:3},
+cellulitis:{skinred:3,fever:1},
+gout:{jointacute:3,uric:3},dyslip:{lipid:3,highbp:0.5},hyperuric:{uric:3,jointacute:0.5,lipid:0.5},headache:{headache:3,highbp:1,vomit:0.5},renalcolic:{flank:3,hematuria:3,abdpain:1,vomit:1,dysuria:1},lbp:{lowback:3,myalgia:2,flank:1},abdpain:{abdpain:3,vomit:0.5,epigastric:1,diarrhea:0.5,fever:0.5},freq:{freq:3,dysuria:2,polyuria:1,pyuria:1,hematuria:1}};
+FMAP.uti.freq=2;FMAP.uti.hematuria=1;FMAP.t2dm.freq=1;FMAP.htn.lipid=0.5;FMAP.gout.myalgia=0.5;
+const ADD={dengue:{tourniq:2,hepato:1},malaria:{hepato:0.5,jaundice:0.5},typhoid:{hepato:0.5},cap:{crackles:3},tb:{crackles:1},pharyngitis:{exudate:2},uti:{cva:2},renalcolic:{cva:2},abdpain:{rebound:3,murphy:2},headache:{neck:1},lbp:{slr:3},gout:{tophi:2},hyperuric:{tophi:2},preecl:{edema:1},htn:{edema:0.5}};
+for(const k in ADD)Object.assign(FMAP[k],ADD[k]);
+Object.assign(FMAP.abdpain,{rovsing:3,cullen:2});Object.assign(FMAP.dengue,{crt:2});Object.assign(FMAP.malaria,{crt:0.5});Object.assign(FMAP.tb,{clubbing:1});Object.assign(FMAP.cap,{clubbing:0.3});
+DEFAULT.forEach(d=>{if(FMAP[d.id])d.feat=FMAP[d.id]});
+const FL={};FX.forEach(g=>g[1].forEach(f=>FL[f[0]]=f[1]));
+const SEL=new Set();
+function buildDx(){document.getElementById("dxc").innerHTML=FX.map(g=>`<div class="src"><b>${g[0]}</b></div><div class="list">`+g[1].map(f=>`<span class="chip fx" data-k="${f[0]}" onclick="tg('${f[0]}',this)">${f[1]}</span>`).join("")+"</div>").join("")}
+function tg(k,el){SEL.has(k)?SEL.delete(k):SEL.add(k);el.classList.toggle("on");dx()}
+function clrDx(){SEL.clear();document.querySelectorAll(".fx.on").forEach(e=>e.classList.remove("on"));dx()}
+function dx(){
+ const o=document.getElementById("dxr");if(!SEL.size){o.innerHTML="";return}
+ const r=DB.filter(d=>d.feat).map(d=>{let m=0,tot=0,hit=[];for(const k in d.feat){tot+=d.feat[k];if(SEL.has(k)){m+=d.feat[k];hit.push(FL[k]||k)}}return{d,m,tot,hit}}).filter(x=>x.m>0).sort((a,b)=>b.m-a.m||b.m/b.tot-a.m/a.tot).slice(0,6);
+ const wr=[...SEL].filter(k=>RFW[k]).map(k=>`<div class="sec red"><h3>${RFW[k]}</h3></div>`).join("");
+ o.innerHTML=wr+(r.length?"<b>លទ្ធភាពវិនិច្ឆ័យ (differential) តាមការផ្គូផ្គង៖</b>"+r.map(x=>`<div class="sec"><a href="#view" onclick="pick('${x.d.id}')"><b>${dn(x.d)}</b></a> <span class="tag">${T("ផ្គូផ្គង")} ${Math.round(100*x.m/x.tot)}%</span><div class="src">${T("ត្រូវនឹង៖")} ${x.hit.map(T).join(", ")}</div></div>`).join("")+'<div class="src">ជំនួយគិត differential ប៉ុណ្ណោះ មិនមែនការវិនិច្ឆ័យទេ។ ក្នុងកម្ពុជា ករណីគ្រុន គួរគិតទាំង Dengue និង Malaria; ជំងឺផ្សេងក្រៅបញ្ជីក៏អាចកើតមាន។ គ្រូពេទ្យជាអ្នកសម្រេច។</div>':"មិនមានជំងឺក្នុងបញ្ជីដែលត្រូវនឹង");
+}
+function toggleDx(){const e=document.getElementById("dx");e.hidden=!e.hidden}
+const LAB=[
+["CBC – Hb / MCV","Hb ប្រុស ~13–17, ស្រី ~12–15 g/dL។ MCV ~80–100 fL","Hb ទាប + MCV <80 → ខ្វះជាតិដែក/thalassemia; MCV >100 → B12/folate, ស្រា, ថ្លើម។ Hb <7 ធ្ងន់។ Hb ខ្ពស់ + ខ្សោះជាតិទឹក → hemoconcentration"],
+["CBC – WBC","~4–11 ×10⁹/L","WBC ទាប (leukopenia)៖ dengue, វីរុស, typhoid, malaria។ WBC ខ្ពស់ + neutrophil ច្រើន → បាក់តេរី (បើគ្មាន steroid/stress); ត្រូវផ្គូផ្គងគ្លីនិក"],
+["CBC – Platelet","~150–400 ×10⁹/L","≤100 ក្នុងគ្រុន → គិត dengue (និង malaria, sepsis); ធ្លាក់លឿន + Hct កើន = សញ្ញាព្រមាន dengue។ <20 ឬមានហូរឈាម → ព្រួយបារម្ភធ្ងន់"],
+["Hematocrit (Hct)","ប្រុស ~40–54%, ស្រី ~36–48%","Dengue៖ Hct កើន ≥20% ពី baseline = plasma leakage (WHO) → ត្រូវការសារធាតុរាវ។ Hct មិនកើនទោះ shock → គិតហូរឈាម"],
+["CRP","<5 mg/L (ប្រហែល)","ខ្ពស់ខ្លាំង (>100) ជួយគិតបាក់តេរីធ្ងន់ ប៉ុន្តែមិនបែងចែកដាច់ខាត; ទាប ជួយគិតវីរុស។ មិនប្រើតែឯង"],
+["Glucose / HbA1c","FPG <5.6 mmol/L (100 mg/dL); ADA IFG 5.6–6.9 (WHO 6.1–6.9)","ទឹកនោមផ្អែម៖ FPG ≥7.0 mmol/L (126 mg/dL), random ≥11.1 mmol/L + រោគសញ្ញា, HbA1c ≥6.5%; បញ្ជាក់ម្តងទៀតបើគ្មានរោគសញ្ញា។ Glucose ទាប <3.9 (≤70 mg/dL) hypoglycemia"],
+["Creatinine / eGFR","Creatinine ~0.6–1.2 mg/dL (53–106 µmol/L); eGFR ≥90","eGFR <60 ជាង ៣ខែ = CKD; <30 ធ្ងន់ → កែដូសថ្នាំ, ជៀសវាង NSAID/metformin។ ឡើងឆាប់ (AKI) → រកខ្សោះជាតិទឹក/ឧបសគ្គ/ថ្នាំ"],
+["Electrolytes (Na⁺ / K⁺)","Na ~135–145, K ~3.5–5.0 mmol/L","K ខ្ពស់ → ACEi/ARB, CKD, ថ្នាំ K-sparing; K ទាប → diuretic, រាគ/ក្អួត។ Na ទាប → ខ្សោះទឹក/SIADH/thiazide"],
+["Urinalysis (dipstick/microscopy)","Leukocyte esterase/nitrite −, RBC <3/hpf, protein −","Pyuria (WBC >5–10/hpf) + nitrite + + រោគសញ្ញា → UTI។ Haematuria → ថ្ម/UTI/មហារីក/glomerular។ Protein + → pre-eclampsia, CKD, ទឹកនោមផ្អែម។ Glucose/ketone + → DM/DKA។ ត្រូវការ culture ពេលស្មុគស្មាញ"],
+["AST / ALT","~<40 U/L (ប្រហែល)","Dengue៖ AST ≥ ALT ឡើងជាញឹកញាប់។ ≥10× ULN → កុំប្រើ paracetamol (MSF)។ TB drugs៖ ឈប់បើ ALT >3× + រោគសញ្ញា ឬ >5× ទោះគ្មាន។ ស្រា៖ AST:ALT >2"],
+["Lipid profile","TC <5.2 mmol/L (200 mg/dL); TG <1.7 (150 mg/dL); HDL ប្រុស >1.0, ស្រី >1.3","គោលដៅ LDL តាមហានិភ័យ CVD (ហានិភ័យខ្ពស់ ទាបជាង)។ TG ≥5.6 mmol/L (500 mg/dL) → ហានិភ័យ pancreatitis។ ពិនិត្យមូលហេតុបន្ទាប់បន្សំ (TSH, DM, ស្រា, ថ្នាំ)"],
+["Uric acid","ប្រុស ~3.5–7.0, ស្រី ~2.5–6.0 mg/dL","Hyperuricemia >6.8–7 mg/dL; អាចធម្មតាក្នុងអំឡុងស្រួចស្រាវ gout (មិនបដិសេធ)។ Gout ដាច់ខាតត្រូវ crystal/គ្លីនិក។ គោលដៅព្យាបាល <6 mg/dL"],
+["Dengue NS1 / IgM / IgG","—","NS1 + (ថ្ងៃ១–៥) បញ្ជាក់ dengue; NS1 − មិនបដិសេធ។ IgM + ក្រោយ ~ថ្ងៃ៥; IgG កើនលឿន = ឆ្លងលើកទី២។ ផ្គូផ្គងជាមួយ platelet/Hct"],
+["Malaria RDT / Blood film","—","RDT HRP2 +: P. falciparum (អាចនៅ + ២–៤សប្តាហ៍ក្រោយព្យាបាល)។ Film បញ្ជាក់ប្រភេទ និង parasite density។ RDT − តែគ្លីនិកសង្ស័យខ្លាំង → ធ្វើ film ម្តងទៀត"],
+["Typhoid – culture / Widal","—","Blood culture (មុនថ្នាំ) ជាស្តង់ដារ; Widal ភាពជាក់លាក់ទាប (មិនគួរពឹងផ្អែកតែឯង)។ Leukopenia/ALT ឡើងជួយគិត"],
+["CXR","—","Consolidation/infiltrate + រោគសញ្ញា → pneumonia; cavity/infiltrate ផ្នែកលើ → គិត TB (បញ្ជាក់ Xpert); effusion, cardiomegaly។ ធម្មតាមិនបដិសេធ asthma/PE"]];
+LAB.push(
+["ECG","Rate 60–100/នាទី; QTc ប្រហែល <450 ms (ប្រុស), <460 ms (ស្រី)","ST elevation ≥1 mm ក្នុង lead ជាប់គ្នា ២ឡើង (ឬ LBBB ថ្មី) + ឈឺទ្រូង → STEMI បន្ទាន់។ Irregularly irregular, គ្មាន P → AF។ T ខ្ពស់មុតស្រួច/QRS ធំ → hyperkalemia។ QTc វែង → ប្រយ័ត្នថ្នាំ (azithromycin, ondansetron, piperaquine/DHA-PPQ, fluoroquinolone) និងកែ K⁺/Mg²⁺"],
+["Troponin (hs-cTn)","ទាបជាង 99th percentile របស់ assay (ខុសតាមមន្ទីរពិសោធន៍)","កើន + ឡើង/ធ្លាក់តាមពេល (ធ្វើ serial 0/1–3 ម៉ោង) + គ្លីនិក/ECG → MI។ កើនក៏កើតក្នុង CKD, sepsis, PE, myocarditis, heart failure, tachyarrhythmia (មិនមែន MI ទាំងអស់)។ លទ្ធផលធម្មតាដំបូង <3 ម៉ោងពីចាប់ផ្តើមរោគ មិនបដិសេធ MI ទេ"],
+["ABG / Lactate","pH 7.35–7.45; PaCO₂ 35–45 mmHg; HCO₃ 22–26 mmol/L; PaO₂ ~80–100 mmHg (air ក្នុងបន្ទប់); lactate <2 mmol/L","អានតាមលំដាប់៖ pH → PaCO₂ (respiratory) → HCO₃ (metabolic)។ Anion gap = Na − (Cl + HCO₃), ធម្មតា ~8–12។ PaO₂ <60 → respiratory failure។ Lactate >2 → hypoperfusion/sepsis (WHO arbo 2025 ប្រើ lactate ជាមួយ capillary refill ដើម្បីដឹកនាំសារធាតុរាវ)"],
+["Amylase / Lipase","ប្រហែល 3× ULN ជាកម្រិតសម្រាប់ pancreatitis","Pancreatitis៖ ត្រូវ ២ ក្នុង ៣ – ឈឺពោះ epigastric ធម្មតា, lipase/amylase ≥3× ULN, imaging ត្រូវនឹង។ Lipase ជាក់លាក់ជាង amylase (amylase កើនក្នុង parotitis, CKD, macroamylasemia)។ កម្រិតកើនមិនទស្សន៍ទាយភាពធ្ងន់ទេ។ ហេតុ៖ ថ្មទឹកប្រមាត់, ស្រា, TG >10 mmol/L"],
+["Urine pregnancy test (hCG)","អវិជ្ជមាន (មិនមានផ្ទៃពោះ)","+ → មានផ្ទៃពោះ (តាមជួរ sensitivity ~ក្រោយអវត្តមានមករដូវ)។ ស្ត្រីវ័យបន្តពូជ + ឈឺពោះ/ហូរឈាម + test + → <b>ចាត់ទុកជា ectopic រហូតដល់បដិសេធដោយ ultrasound</b>។ − ព្រមទាំងមិនបដិសេធបើដំបូងពេក/ទឹកនោមរាវ → ធ្វើម្តងទៀត ឬ serum β-hCG។ ធ្វើមុនថ្នាំ/X-ray/CT ដែលប៉ះពាល់ទារក (ACEi/ARB, statin, doxycycline, fluoroquinolone)"]
+);
+const SIGNS=[
+["Tourniquet test","បិទ cuff រវាង SBP និង DBP ៥នាទី។ វិជ្ជមាន ≥20 petechiae/2.5 cm² (WHO 2009)។ គាំទ្រ dengue តែមិនជាក់លាក់ (វិជ្ជមានក្នុងជំងឺឆ្លងផ្សេង); អវិជ្ជមានមិនបដិសេធទេ"],
+["CVA tenderness (Murphy punch)","គោះស្រាលលើមុំ costovertebral។ វិជ្ជមាន → pyelonephritis/ថ្មតម្រងនោម (ចង្កេះចំហៀង); មិនមែន mechanical back pain"],
+["Murphy's sign","ឈប់ដកដង្ហើមចូលពេលសង្កត់ RUQ → cholecystitis (ក្រៅបញ្ជី) – ultrasound"],
+["McBurney / Rovsing / Psoas / Obturator","ឈឺ RLQ + Rovsing (សង្កត់ LLQ → ឈឺ RLQ) ឬ psoas/obturator + → appendicitis; ស្ត្រីវ័យបន្តពូជ ត្រូវ pregnancy test + gyn។ បញ្ជូនវះកាត់"],
+["Guarding / Rebound / ពោះរឹង","Peritonitis → acute surgical abdomen បន្ទាន់ (perforation, appendicitis ហែក ។ល។)។ កុំពន្យារជាមួយថ្នាំបំបាត់ឈឺតែប៉ុណ្ណោះ"],
+["Cullen / Grey Turner","ស្នាមជាំជុំវិញផ្ចិត/ចំហៀង → hemorrhagic pancreatitis (សញ្ញាយឺត កម្រ) ឬ retroperitoneal bleed"],
+["Kernig / Brudzinski / ក/ក្បាលរឹង","ភាពប្រែប្រួលទាប (sensitivity ~៥%–៣០%) – អវិជ្ជមានមិនបដិសេធ meningitis; គ្រុន+ក/ក្បាលរឹង/ស្មារតីប្រែ → បន្ទាន់ (LP/CT, antibiotic)"],
+["CRT >2 វិនាទី / Pulse pressure តូច / ត្រជាក់ដៃជើង","សញ្ញា shock (ក្នុង dengue: plasma leakage – ត្រូវការសារធាតុរាវ, Group C; WHO 2025 ប្រើ CRT + lactate ដឹកនាំ)"],
+["JVP ខ្ពស់ / ហើមជើង Pitting","Heart failure, ខ្សោយតម្រងនោម, tamponade, PE, pre-eclampsia (ហើម+BP+protein)។ ហើមម្ខាងជើង → គិត DVT"],
+["Clubbing","Lung disease រ៉ាំរ៉ៃ (bronchiectasis, មហារីកសួត, TB ដែលមានជំងឺក្រៅ), cyanotic heart disease, IBD/cirrhosis"],
+["Crackles / Wheeze / Bronchial breathing","Crackles ជាប់ម្ខាង + គ្រុន → pneumonia; ទ្វេភាគីខាងក្រោម → heart failure/ILD។ Wheeze ពេលដកដង្ហើមចេញ → asthma/COPD។ Bronchial breathing → consolidation"],
+["Hepatomegaly / Jaundice","Dengue៖ ថ្លើមធំទន់ឈឺ >2 cm = សញ្ញាព្រមាន; Malaria ធ្ងន់៖ jaundice; ជាំលឿង + គ្រុន + ឈឺ RUQ → ទឹកប្រមាត់/ថ្លើម (LFT, ultrasound)"],
+["SLR (Straight leg raise)","ឈឺបញ្ចោញខ្នងក្រោម→ជើង នៅ 30–70° → radiculopathy (L5–S1); ពិនិត្យ red flags cauda equina"],
+["Pallor (conjunctival/palmar)","ស្លេក → ស្លេកស្លាំង; បែងចែកតាម MCV (ខ្វះដែក/thalassemia/B12); ស្ត្រីមានផ្ទៃពោះ ជាច្រើនកើតជាខ្វះដែក"]];
+function buildLab(){document.getElementById("labc").innerHTML=LAB.map(l=>`<details class="sec"><summary><b>${l[0]}</b></summary><div class="src">ជួរយោង៖ ${l[1]}</div><div>${l[2]}</div></details>`).join("")+'<h3 style="color:var(--ac);margin:12px 0 4px">សញ្ញាពិនិត្យរាងកាយ (Positive signs)</h3>'+SIGNS.map(l=>`<details class="sec"><summary><b>${l[0]}</b></summary><div>${l[1]}</div></details>`).join("")+'<div class="src">ជួរយោងប្រហែល (មនុស្សពេញវ័យ) – ប្រើជួរយោងរបស់មន្ទីរពិសោធន៍ដែលអ្នកប្រើ ហើយបកស្រាយតាមគ្លីនិក។ មិនទាន់ផ្ទៀងផ្ទាត់ជាមួយ guideline ជាតិកម្ពុជា។</div>'}
+function toggleLab(){const e=document.getElementById("lab");e.hidden=!e.hidden}
+const RFW={rovsing:"⚠ Rovsing/psoas/obturator + → គិត appendicitis – បញ្ជូនវះកាត់/ស្ត្រីវ័យបន្តពូជ ត្រូវ pregnancy test",cullen:"⚠ Cullen/Grey Turner → hemorrhagic pancreatitis/retroperitoneal bleed – បន្ទាន់",jvp:"⚠ JVP ខ្ពស់ → heart failure/tamponade/PE (ក្រៅបញ្ជី) – ពិនិត្យបន្ទាន់",crt:"⚠ CRT វែង/pulse pressure តូច → shock – បន្ទាន់ (dengue Group C?)",neck:"⚠ ក/ក្បាលរឹង → គិត meningitis/SAH (ក្រៅបញ្ជី) – បន្ទាន់",rebound:"⚠ ពោះរឹង/rebound → peritonitis/acute surgical abdomen – បន្ទាន់ បញ្ជូនវះកាត់"};
+const DRUGS=[
+["PPI (ថ្នាំកាត់បន្ថយអាស៊ីតក្រពះ)","GERD, gastritis, ulcer, H. pylori","omeprazole 20 mg · esomeprazole 20 mg · lansoprazole 30 mg · pantoprazole 40 mg · rabeprazole 20 mg (ម្តង/ថ្ងៃ មុនអាហារ)","ប្រសិទ្ធភាពស្រដៀងគ្នា ជំនួសគ្នាបាន; ខុសគ្នាតែតម្លៃ/ការមាន/អន្តរកម្ម (omeprazole/esomeprazole ↔ clopidogrel)។ H2 blocker (famotidine 20–40 mg) ខ្សោយជាង"],
+["Statin (ថ្នាំបន្ថយខ្លាញ់)","Dyslipidemia, ការពារ CVD","atorvastatin 10–80 mg · rosuvastatin 5–40 mg · simvastatin 20–40 mg · pravastatin 20–40 mg","ប្រហែលស្មើ: atorvastatin 10 ≈ rosuvastatin 5 ≈ simvastatin 20–40 ≈ pravastatin 40។ Intensity ខ្ពស់៖ atorvastatin 40–80, rosuvastatin 20–40។ Simvastatin មានអន្តរកម្មច្រើន (macrolide, azole, amlodipine ដូសខ្ពស់)។ Rosuvastatin បើ CKD ត្រូវកែដូស"],
+["ACE inhibitor","HTN, CKD/DM protein, heart failure","enalapril 5–20 mg · lisinopril 10–40 mg · perindopril 4–8 mg · ramipril 2.5–10 mg · captopril 12.5–50 mg ៣ដង","ជំនួសគ្នាបាន; ផលរំខានដូចគ្នា (ក្អក, hyperK, angioedema)។ ក្អកពី ACEi → ប្តូរទៅ ARB។ ហាមពេលមានផ្ទៃពោះ"],
+["ARB","HTN, CKD/DM, ប្តូរពី ACEi","losartan 50–100 mg · valsartan 80–320 mg · telmisartan 40–80 mg · irbesartan 150–300 mg · candesartan 8–32 mg","ជំនួសគ្នាបាន; មិនឲ្យ ACEi + ARB ជាមួយគ្នា។ ហាមពេលមានផ្ទៃពោះ; តាមដាន K⁺/creatinine"],
+["Calcium channel blocker (DHP)","HTN, angina","amlodipine 5–10 mg · nifedipine retard 20–60 mg · felodipine 5–10 mg · lercanidipine 10–20 mg","ជំនួសគ្នាបាន; ហើមជើងជាផលរំខានទូទៅ (lercanidipine តិចជាងបន្តិច)។ Nifedipine ខ្លីអាចប្រើក្នុងមានផ្ទៃពោះ/preeclampsia តាមការណែនាំ OB។ Diltiazem/verapamil (non-DHP) មិនមែនជំនួសដោយផ្ទាល់ (បន្ថយ HR, ជៀសវាង + β-blocker)"],
+["Thiazide / thiazide-like","HTN, edema","hydrochlorothiazide 12.5–25 mg · chlorthalidone 12.5–25 mg · indapamide 1.25–2.5 mg","ជំនួសគ្នាបាន; ផលរំខាន hypoK/hypoNa/hyperuricemia (ហ្គោត)។ ប្រយ័ត្ន eGFR <30 (HCTZ ខ្សោយ)"],
+["β-blocker","HTN, angina, AF rate, heart failure, migraine","bisoprolol 2.5–10 mg · metoprolol 50–200 mg · atenolol 25–100 mg · carvedilol 6.25–25 mg ២ដង · propranolol 40–160 mg","មិនស្មើគ្នាទាំងអស់៖ heart failure ប្រើតែ bisoprolol/carvedilol/metoprolol succinate; atenolol ចេញទៅតម្រងនោម (កែ CKD)។ Propranolol ហាម asthma; ទាំងអស់ប្រយ័ត្ន asthma/bradycardia"],
+["Antihistamine H1","Allergy, urticaria, rhinitis, រមាស់","cetirizine 10 mg · levocetirizine 5 mg · loratadine 10 mg · desloratadine 5 mg · fexofenadine 120–180 mg · (ងងុយ) chlorphenamine 4 mg","ជំនួសគ្នាបាន; cetirizine ងងុយជាងបន្តិច; chlorphenamine/diphenhydramine ងងុយខ្លាំង"],
+["NSAID","ឈឺ, រលាក, គ្រុន, gout, renal colic","ibuprofen 400 mg ៣ដង · naproxen 250–500 mg ២ដង · diclofenac 50 mg ៣ដង · meloxicam 7.5–15 mg · celecoxib 200 mg · ketorolac (ខ្លីមិនលើស ៥ថ្ងៃ)","ប្រសិទ្ធភាពស្រដៀងគ្នា; <b>កុំប្រើ ២ NSAID ក្នុងពេលតែមួយ</b>។ Celecoxib ក្រពះប្រសើរជាង។ ជៀសវាងក្នុង dengue, CKD, ក្រពះហូរឈាម, ត្រីមាសទី៣។ Ibuprofen/naproxen CV ហានិភ័យទាបជាង diclofenac"],
+["Penicillin","ឆ្លងមេរោគបាក់តេរី (pharyngitis, CAP, UTI…)","amoxicillin 500 mg–1 g ៣ដង · amoxicillin-clavulanate 625–1000 mg ២–៣ដង · phenoxymethylpenicillin 500 mg ៤ដង · ampicillin IV 1–2 g ៦ម៉ោង · cloxacillin 500 mg ៤ដង","អាឡែស៊ី penicillin ប៉ះពាល់ទាំងក្រុម។ Amoxicillin ≠ cloxacillin (staph)។ Amox-clav ធំជាងលើ anaerobe/β-lactamase"],
+["Cephalosporin","ឆ្លងមេរោគ, CAP, UTI, typhoid","Gen1: cefalexin 500 mg, cefazolin IV · Gen2: cefuroxime · Gen3: ceftriaxone 1–2 g IV, cefotaxime, cefixime 200–400 mg, cefpodoxime · ceftazidime (pseudomonas)","ក្នុង Gen ដូចគ្នាជំនួសគ្នាបានច្រើន; ខុសគ្នា Gen មិនស្មើ (spectrum ខុស)។ Cross-reactivity តិចជាមួយ penicillin (ប្រយ័ត្ន anaphylaxis ប្រវត្តិ)"],
+["Macrolide","Atypical pneumonia, alt ពេលអាឡែស៊ី penicillin, typhoid (azithro)","azithromycin 500 mg ម្តង/ថ្ងៃ · clarithromycin 500 mg ២ដង · erythromycin 500 mg ៤ដង","ទាំងអស់ពន្យារ QT; clarithromycin/erythromycin មានអន្តរកម្ម CYP3A4 ច្រើន (statin, warfarin); azithromycin តិចជាង"],
+["Fluoroquinolone","UTI/pyelo, typhoid (ប្រយ័ត្នភាពស៊ាំ), respiratory","ciprofloxacin 500 mg ២ដង · levofloxacin 500–750 mg ម្តង · ofloxacin 200–400 mg ២ដង · moxifloxacin 400 mg","Cipro ជាង UTI/gram−; levo/moxi ល្អជាង respiratory (S. pneumoniae) – មិនស្មើទាំងអស់។ ហាមមានផ្ទៃពោះ; tendinopathy, QT, ជៀសវាងក្នុងកុមារ"],
+["Antiemetic","ចង្អោរ, ក្អួត","ondansetron 4–8 mg · metoclopramide 10 mg ៣ដង (≤៥ថ្ងៃ) · domperidone 10 mg ៣ដង · prochlorperazine 5–10 mg","យន្តការខុសគ្នា (5-HT3 vs D2)។ Ondansetron ពន្យារ QT, ល្អជាង gastroenteritis; metoclopramide/domperidone មាន prokinetic ប៉ុន្តែ QT/EPS ប្រយ័ត្ន"],
+["Sulfonylurea","T2DM","gliclazide 40–320 mg · glimepiride 1–6 mg · glipizide 2.5–20 mg · glibenclamide 2.5–15 mg","<b>ជ្រើស gliclazide/glimepiride ជំនួស glibenclamide</b> ក្នុងមនុស្សចាស់/CKD (hypoglycemia តិចជាង)។ ជំនួសគ្នាបានក្នុងប្រសិទ្ធភាព hypoglycemia ជាហានិភ័យរួម"],
+["SGLT2 inhibitor / DPP-4 inhibitor","T2DM (ជួរទី២), CKD/HF (SGLT2)","SGLT2: dapagliflozin 10 mg · empagliflozin 10–25 mg · canagliflozin · DPP-4: sitagliptin 100 mg · linagliptin 5 mg · vildagliptin 50 mg ២ដង","ក្នុងក្រុមជំនួសគ្នាបាន; SGLT2 ប្រយ័ត្ន UTI/genital infection, DKA; DPP-4 មិនមានហានិភ័យ hypoglycemia ដាច់តែឯង។ Linagliptin មិនត្រូវកែដូស CKD"],
+["Systemic corticosteroid","Asthma, allergy, រលាក","prednisolone 5 mg ≈ prednisone 5 mg ≈ methylprednisolone 4 mg ≈ hydrocortisone 20 mg ≈ dexamethasone 0.75 mg","ស្មើដូស glucocorticoid; ខុសគ្នា mineralocorticoid (hydrocortisone) និងរយៈពេល។ Dexamethasone យូរបំផុត"],
+["H2 blocker / Antacid","Dyspepsia ស្រាល","famotidine 20–40 mg · (ranitidine ដកចេញទីផ្សារ) · antacid (Al/Mg) ពេលមានរោគសញ្ញា","Famotidine ជំនួស ranitidine; PPI ខ្លាំងជាងសម្រាប់ GERD/ulcer"],
+["Laxative","ទល់លាមក","lactulose 15–30 ml · macrogol (PEG) · bisacodyl 5–10 mg · senna 7.5–15 mg","Osmotic (lactulose/PEG) សមរម្យរយៈពេលវែង; stimulant (bisacodyl/senna) ខ្លីៗ – ជំនួសបានតាមស្ថានភាព មិនស្មើគ្នា"],
+["ACT (Malaria)","Falciparum មិនស្មុគស្មាញ","artemether-lumefantrine · dihydroartemisinin-piperaquine · artesunate-amodiaquine · artesunate-mefloquine","ជ្រើសតាមគោលការណ៍ជាតិ (CNM) និងភាពស៊ាំតំបន់ – <b>មិនជំនួសគ្នាដោយសេរី</b>។ Piperaquine/lumefantrine/mefloquine ពន្យារ QT ឬមានផលនឹក; ផ្ទៀងផ្ទាត់ជាមួយ CNM"]];
+function buildSub(){const q=(document.getElementById("sq").value||"").toLowerCase();
+ const r=DRUGS.filter(d=>(d.join(" ")).toLowerCase().includes(q));
+ document.getElementById("subc").innerHTML=r.map(d=>`<details class="sec"><summary><b>${d[0]}</b></summary><div class="src">ប្រើសម្រាប់៖ ${d[1]}</div><div><b>ថ្នាំក្នុងក្រុម (ដូសពេញវ័យ ប្រហែល)៖</b> ${d[2]}</div><div class="src">${d[3]}</div></details>`).join("")||"រកមិនឃើញ"}
+function toggleSub(){const e=document.getElementById("sub");e.hidden=!e.hidden}
+const KEY="medguide_v5";
+let DB;try{DB=JSON.parse(localStorage.getItem(KEY))||DEFAULT}catch(e){DB=DEFAULT}
+DB.forEach(d=>{if(!d.feat){const x=DEFAULT.find(y=>y.id===d.id);if(x&&x.feat)d.feat=x.feat}});
+let cur=null;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}if(window.cloudSave)window.cloudSave()}
+function render(){
+ const q=document.getElementById("q").value.toLowerCase().trim();
+ const allc=[...new Set(DB.map(d=>d.cat||"ផ្សេងៗ"))];
+ document.getElementById("cats").innerHTML=["ទាំងអស់",...allc].map(c=>`<span class="chip cat ${(c===CATF)||(c==="ទាំងអស់"&&!CATF)?"on":""}" onclick="setCat('${c}')">${c}</span>`).join("");
+ let items=DB.filter(d=>(d.name+" "+(d.alt||"")).toLowerCase().includes(q));
+ if(!q&&CATF)items=items.filter(d=>(d.cat||"ផ្សេងៗ")===CATF);
+ document.getElementById("list").innerHTML=items.map(d=>`<span class="chip ${cur===d.id?"on":""}" onclick="pick('${d.id}')">${dn(d)}</span>`).join("")||'<div class="src">គ្មានលទ្ធផល – សាកល្បង 🌐 ស្វែងរកក្នុង Internet</div>';
+ const d=items.find(x=>x.id===cur)||items[0];
+ if(!d){document.getElementById("view").innerHTML="";return}
+ cur=d.id;
+ const u=UI[LANG],c=(d.i18n&&d.i18n[LANG])||null;
+ const nm=LANG==="en"&&d.en?d.en:LANG==="fr"&&d.fr?d.fr:d.name;
+ let h=`<div class="card"><h2>${nm}</h2><div class="src">KM: ${d.name} · EN: ${d.en||"—"} · FR: ${d.fr||"—"}</div><span class="tag">${d.status||""}</span>`;
+ if(LANG!=="km"&&!c)h+=`<div class="src">⚠ ${u.fb}</div>`;
+ const OPEN={tx:1,red:1,def:1};
+ const EX=extras(d);
+ ["tx","red","def","XD","XL","XS","inv","com","ae","ddi"].forEach(k=>{if(k[0]==="X"){if(EX[k])h+=EX[k];return}const a=(c&&c[k])||d[k];if(a&&a.length)h+=`<details class="sec ${k==="red"?"red":""}" ${OPEN[k]?"open":""}><summary>${u.S[k]}</summary><ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul></details>`});
+ if(d.src)h+=`<details class="sec"><summary>${u.src}</summary><div class="src">${d.src.map(T).join(" · ")}<br>${u.ver}: ${T(d.verified||"—")}</div></details>`;
+ document.getElementById("view").innerHTML=h+"</div>";
+}
+function pick(id){cur=id;render();document.getElementById("list").querySelectorAll(".chip")}
+document.getElementById("q").oninput=render;
+function toggleEd(){const e=document.getElementById("ed");e.hidden=!e.hidden;document.getElementById("ta").value=JSON.stringify(DB,null,1)}
+function saveEd(){try{DB=JSON.parse(document.getElementById("ta").value);persist();render();alert("បានរក្សាទុក")}catch(e){alert("JSON មិនត្រឹមត្រូវ")}}
+function exp(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,1)],{type:"application/json"}));a.download="medicine-guideline.json";a.click()}
+document.getElementById("f").onchange=e=>{const r=new FileReader();r.onload=()=>{try{DB=JSON.parse(r.result);persist();render()}catch(x){alert("ឯកសារមិនត្រឹមត្រូវ")}};r.readAsText(e.target.files[0])};
+
+const LANGS=[["km","ខ្មែរ"],["en","English"],["fr","Français"]];
+const esc=t=>String(t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function wiki(l,q){
+ const u=`https://${l}.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrlimit=3&prop=extracts|info&exintro=1&explaintext=1&exchars=350&inprop=url`;
+ const r=await fetch(u);const j=await r.json();
+ return Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);
+}
+async function webSearch(){show("dis",true);
+ const q=document.getElementById("q").value.trim();const w=document.getElementById("web");
+ if(!q){w.innerHTML='<div class="card">សូមវាយឈ្មោះជំងឺក្នុងប្រអប់ស្វែងរកជាមុន</div>';return}
+ const eq=encodeURIComponent(q);
+ let h=`<div class="card"><h3 style="margin:0 0 6px;color:var(--ac)">${T("លទ្ធផលពី Internet៖")} ${esc(q)}</h3><div class="src">តំណស្វែងរកផ្ទាល់៖ <a href="https://www.who.int/search?query=${eq}" target="_blank" rel="noopener">WHO</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${eq}" target="_blank" rel="noopener">PubMed</a> · <a href="https://www.google.com/search?q=${eq}+guideline+treatment" target="_blank" rel="noopener">Google</a></div><div id="wr">កំពុងស្វែងរក…</div></div>`;
+ w.innerHTML=h;
+ const out=await Promise.all(LANGS.map(async([l,n])=>{
+  try{const p=await wiki(l,q);return `<div class="sec"><h3>${n}</h3>`+(p.length?p.map(x=>`<p><a href="${esc(x.fullurl)}" target="_blank" rel="noopener"><b>${esc(x.title)}</b></a><br><span class="src">${esc(x.extract)}</span></p>`).join(""):"<span class='src'>គ្មានលទ្ធផល</span>")+"</div>"}
+  catch(e){return `<div class="sec"><h3>${n}</h3><span class="src">មិនអាចភ្ជាប់ Internet</span></div>`}
+ }));
+ document.getElementById("wr").innerHTML=out.join("")+'<div class="src">ប្រភព Wikipedia ជាព័ត៌មានទូទៅ មិនមែន guideline ព្យាបាលទេ – សូមផ្ទៀងផ្ទាត់ជាមួយ WHO/CNM។</div>';
+}
+document.getElementById("q").addEventListener("keydown",e=>{if(e.key==="Enter")webSearch()});
+const LABKEY={thrombo:"CBC – Platelet",leuko:"CBC – WBC",hct:"Hematocrit (Hct)",ns1:"Dengue NS1 / IgM / IgG",rdtmal:"Malaria RDT / Blood film",pyuria:"Urinalysis (dipstick/microscopy)",hematuria:"Urinalysis (dipstick/microscopy)",protein:"Urinalysis (dipstick/microscopy)",hyperglyc:"Glucose / HbA1c",microHb:"CBC – Hb / MCV",uric:"Uric acid",cxr:"CXR",lipid:"Lipid profile"};
+const SIGNKEY={tourniq:"Tourniquet test",cva:"CVA tenderness (Murphy punch)",rebound:"Guarding / Rebound / ពោះរឹង",murphy:"Murphy's sign",neck:"Kernig / Brudzinski / ក/ក្បាលរឹង",crackles:"Crackles / Wheeze / Bronchial breathing",wheeze:"Crackles / Wheeze / Bronchial breathing",hepato:"Hepatomegaly / Jaundice",jaundice:"Hepatomegaly / Jaundice",slr:"SLR (Straight leg raise)",edema:"JVP ខ្ពស់ / ហើមជើង Pitting",jvp:"JVP ខ្ពស់ / ហើមជើង Pitting",clubbing:"Clubbing",crt:"CRT >2 វិនាទី / Pulse pressure តូច / ត្រជាក់ដៃជើង",rovsing:"McBurney / Rovsing / Psoas / Obturator",cullen:"Cullen / Grey Turner",pallor:"Pallor (conjunctival/palmar)"};
+const LABX={dengue:["AST / ALT","ABG / Lactate"],malaria:["Creatinine / eGFR","Glucose / HbA1c"],typhoid:["Typhoid – culture / Widal","AST / ALT"],cap:["CRP","Creatinine / eGFR"],tb:["AST / ALT","CXR"],age:["Electrolytes (Na⁺ / K⁺)","Creatinine / eGFR"],uti:["Urinalysis (dipstick/microscopy)","Creatinine / eGFR"],htn:["Creatinine / eGFR","Electrolytes (Na⁺ / K⁺)","Lipid profile","ECG"],t2dm:["Creatinine / eGFR","Lipid profile","Urinalysis (dipstick/microscopy)"],preecl:["AST / ALT","Creatinine / eGFR","CBC – Platelet"],dyslip:["AST / ALT","Glucose / HbA1c"],gout:["Creatinine / eGFR"],hyperuric:["Creatinine / eGFR","Lipid profile"],renalcolic:["Creatinine / eGFR","Urinalysis (dipstick/microscopy)"],abdpain:["Amylase / Lipase","Urine pregnancy test (hCG)","CBC – WBC"],freq:["Urinalysis (dipstick/microscopy)","Glucose / HbA1c"],ida:["CBC – Hb / MCV"],pharyngitis:["CRP"]};
+function extras(d){
+ const R={},sec=(ic,t,b)=>`<details class="sec"><summary>${ic} ${t}</summary>${b}</details>`;
+ if(d.feat){
+  const ks=Object.keys(d.feat).sort((a,b)=>d.feat[b]-d.feat[a]);
+  let b=`<div>${ks.map(k=>`<span class="tag">${T(FL[k]||k)}${d.feat[k]>=2?" ★":""}</span>`).join(" ")}</div><div class="src">★ = ចំណុចសំខាន់ (ទម្ងន់ខ្ពស់)</div>`;
+  const dif=DB.filter(o=>o.id!==d.id&&o.feat).map(o=>{let s=0;for(const k in d.feat)if(o.feat[k])s+=Math.min(d.feat[k],o.feat[k]);return{o,s}}).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,4);
+  if(dif.length)b+=`<div class="src" style="margin-top:6px"><b>Differential ត្រូវបែងចែក៖</b> ${dif.map(x=>`<a href="#view" onclick="pick('${x.o.id}')">${dn(x.o)}</a>`).join(" · ")}</div>`;
+  R.XD=sec("🩺","សញ្ញា/លទ្ធផលដែលគាំទ្រ និង differential",b);
+ }
+ const titles=[];if(d.feat)for(const k in d.feat){if(LABKEY[k])titles.push(LABKEY[k]);if(SIGNKEY[k])titles.push(SIGNKEY[k])}
+ (LABX[d.id]||[]).forEach(t=>titles.push(t));
+ const li=[...new Set(titles)].map(t=>{const l=LAB.find(x=>x[0]===t);if(l)return `<li><b>${l[0]}</b> <span class="src">(ជួរយោង៖ ${l[1]})</span><br>${l[2]}</li>`;const g=SIGNS.find(x=>x[0]===t);return g?`<li><b>${g[0]}</b><br>${g[1]}</li>`:""}).join("");
+ if(li)R.XL=sec("🧪","ការពិនិត្យ និងសញ្ញា – ការបកស្រាយ",`<ul>${li}</ul><div class="src">ជួរយោងប្រហែល ប្រើតាមមន្ទីរពិសោធន៍របស់អ្នក។</div>`);
+ const t=(d.tx||[]).join(" ").toLowerCase();
+ const cl=DRUGS.filter(x=>(x[2].toLowerCase().match(/[a-z]{6,}/g)||[]).some(n=>t.includes(n)));
+ if(cl.length)R.XS=sec("💊","ថ្នាំជំនួសក្នុងក្រុមតែមួយ",cl.map(x=>`<div class="sec"><b>${x[0]}</b><br>${x[2]}<div class="src">${x[3]}</div></div>`).join("")+'<div class="src">ពិនិត្យ តម្រងនោម/ថ្លើម, មានផ្ទៃពោះ, អាឡែស៊ី, អន្តរកម្ម និងថ្នាំមាននៅ formulary មុនជំនួស។</div>');
+ return R;
+}
+let CATF="";
+function show(t,ns){["dis","dx","lab","sub","ed"].forEach(x=>{(x==="dis"?["cats","list","view","web"]:[x]).forEach(i=>{const e=document.getElementById(i);if(e)e.hidden=(x!==t)})});
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+ document.getElementById("menu").hidden=true;if(!ns)window.scrollTo(0,0)}
+function toggleMenu(){const m=document.getElementById("menu");m.hidden=!m.hidden}
+function toggleDx(){show("dx")}function toggleLab(){show("lab")}function toggleSub(){show("sub")}
+function toggleEd(){document.getElementById("ta").value=JSON.stringify(DB,null,1);show("ed")}
+function setCat(c){CATF=c==="ទាំងអស់"?"":c;document.getElementById("q").value="";render()}
+function pick(id){cur=id;show("dis",true);render();document.getElementById("view").scrollIntoView({behavior:"smooth"})}
+document.getElementById("q").addEventListener("input",()=>show("dis",true));
+const FLT={fever:["Fever","Fièvre"],fever5:["Fever >5 days","Fièvre >5 jours"],headache:["Headache","Céphalée"],myalgia:["Myalgia","Myalgies"],rash:["Rash","Éruption cutanée"],cough:["Cough","Toux"],cough2w:["Cough >2 weeks","Toux >2 semaines"],hemoptysis:["Haemoptysis","Hémoptysie"],dyspnea:["Dyspnoea","Dyspnée"],wheeze:["Wheeze","Sibilants"],sorethroat:["Sore throat","Mal de gorge"],rhinorrhea:["Runny / blocked nose","Rhinorrhée / nez bouché"],vomit:["Nausea / vomiting","Nausées / vomissements"],diarrhea:["Diarrhoea","Diarrhée"],bloodydiar:["Bloody diarrhoea","Diarrhée sanglante"],abdpain:["Abdominal pain","Douleur abdominale"],epigastric:["Epigastric pain / burning","Douleur / brûlure épigastrique"],constip:["Constipation","Constipation"],dysuria:["Dysuria","Dysurie"],flank:["Flank pain (kidney)","Douleur du flanc (rein)"],lowback:["Low back pain","Lombalgie"],freq:["Urinary frequency","Pollakiurie"],hematuria:["Haematuria","Hématurie"],polyuria:["Polyuria / thirst","Polyurie / soif"],itch:["Itch / urticaria","Prurit / urticaire"],jointacute:["Acute painful swollen joint","Arthrite aiguë douloureuse"],skinred:["Red, warm, swollen skin","Peau rouge, chaude, gonflée"],pallor:["Pallor / easy fatigue","Pâleur / fatigue"],wtloss:["Weight loss","Perte de poids"],nightsweat:["Night sweats","Sueurs nocturnes"],pregnant:["Pregnancy ≥20 weeks","Grossesse ≥20 semaines"],highbp:["BP ≥140/90","TA ≥140/90"],thrombo:["Low platelets","Thrombopénie"],leuko:["Low WBC","Leucopénie"],hct:["Raised Hct","Hématocrite élevé"],ns1:["Dengue NS1/IgM +","Dengue NS1/IgM +"],rdtmal:["Malaria RDT/film +","TDR/frottis paludisme +"],pyuria:["Pyuria / nitrite +","Pyurie / nitrites +"],hyperglyc:["High glucose","Hyperglycémie"],protein:["Proteinuria","Protéinurie"],microHb:["Low Hb, microcytic","Hb basse, microcytaire"],uric:["High uric acid","Uricémie élevée"],lipid:["High lipids (LDL/TG)","Lipides élevés (LDL/TG)"],cxr:["CXR infiltrate","Infiltrat radiographique"],tourniq:["Tourniquet test +","Signe du lacet +"],cva:["CVA tenderness +","Ébranlement lombaire douloureux +"],rebound:["Guarding / rebound +","Défense / rebond +"],murphy:["Murphy's sign +","Signe de Murphy +"],neck:["Neck stiffness (Kernig/Brudzinski +)","Raideur de nuque (Kernig/Brudzinski +)"],crackles:["Crackles in lungs","Crépitants pulmonaires"],exudate:["Tonsillar exudate / marked redness","Exsudat amygdalien / rougeur marquée"],hepato:["Hepatomegaly","Hépatomégalie"],jaundice:["Jaundice","Ictère"],slr:["SLR +","Lasègue +"],tophi:["Tophi / red hot joint","Tophus / articulation rouge chaude"],edema:["Pitting leg oedema","Œdème des jambes (godet)"],rovsing:["Rovsing/Psoas/Obturator +","Rovsing/Psoas/Obturateur +"],cullen:["Cullen/Grey Turner","Cullen/Grey Turner"],jvp:["Raised JVP","Turgescence jugulaire"],clubbing:["Clubbing","Hippocratisme digital"],crt:["CRT >2 s / narrow pulse pressure","TRC >2 s / pression pulsée étroite"]};
+const RFWT={neck:["⚠ Stiff neck → consider meningitis/SAH (not in list) – urgent","⚠ Raideur de nuque → évoquer méningite/HSA (hors liste) – urgent"],rebound:["⚠ Rigid abdomen/rebound → peritonitis/acute surgical abdomen – urgent, refer for surgery","⚠ Défense/rebond → péritonite/abdomen chirurgical aigu – urgent, avis chirurgical"],rovsing:["⚠ Rovsing/psoas/obturator + → consider appendicitis – refer for surgery; women of childbearing age need a pregnancy test","⚠ Rovsing/psoas/obturateur + → évoquer appendicite – avis chirurgical ; test de grossesse chez la femme en âge de procréer"],cullen:["⚠ Cullen/Grey Turner → haemorrhagic pancreatitis/retroperitoneal bleed – urgent","⚠ Cullen/Grey Turner → pancréatite hémorragique/saignement rétropéritonéal – urgent"],jvp:["⚠ Raised JVP → heart failure/tamponade/PE (not in list) – urgent assessment","⚠ Turgescence jugulaire → insuffisance cardiaque/tamponnade/EP (hors liste) – évaluation urgente"],crt:["⚠ Prolonged CRT/narrow pulse pressure → shock – urgent (dengue Group C?)","⚠ TRC allongé/pression pulsée étroite → choc – urgent (dengue groupe C ?)"]};
+const MAP={};
+function M(k,en,fr){MAP[k]=[en,fr]}
+for(const k in FLT)M(FL[k],...FLT[k]);
+for(const k in RFWT)M(RFW[k],...RFWT[k]);
+[["/medicine · ការព្យាបាលតាម Guideline (WHO / កម្ពុជា)","/medicine · Guideline-based treatment (WHO / Cambodia)","/medicine · Traitement selon les recommandations (OMS / Cambodge)"],
+["ជំងឺ","Diseases","Maladies"],["រកវិនិច្ឆ័យ","Diagnosis finder","Aide au diagnostic"],["លទ្ធផល/សញ្ញា","Labs / Signs","Examens / Signes"],["ថ្នាំជំនួស","Drug swaps","Substitutions"],
+["ភាសា","Language","Langue"],
+["ទាំងអស់","All","Tous"],["ជំងឺឆ្លង","Infectious","Infectieuses"],["ផ្លូវដង្ហើម","Respiratory","Respiratoires"],["ក្រពះពោះវៀន","Gastrointestinal","Digestives"],["តម្រងនោម","Renal / urinary","Rénales / urinaires"],["បេះដូង/មេតាបូលីក","Cardio-metabolic","Cardio-métaboliques"],["សម្ភព","Obstetric","Obstétrique"],["ឈាម / ស្ត្រី","Blood / women","Sang / femmes"],["ស្បែក","Skin","Peau"],["សន្លាក់","Joints","Articulations"],["រោគសញ្ញា","Symptoms","Symptômes"],
+["សញ្ញា / ការពិនិត្យអម","Signs / investigations","Signes / examens"],["សញ្ញា Positive (ពិនិត្យរាងកាយ)","Positive signs (physical exam)","Signes positifs (examen clinique)"],
+["ជ្រើសរោគសញ្ញា / sign / លទ្ធផលពិនិត្យ","Select symptoms / signs / test results","Sélectionner symptômes / signes / résultats"],["សម្អាត","Clear","Effacer"],
+["លទ្ធភាពវិនិច្ឆ័យ (differential) តាមការផ្គូផ្គង៖","Possible diagnoses (differential) by match:","Diagnostics possibles (différentiel) selon la concordance :"],
+["ផ្គូផ្គង","match","concordance"],["ត្រូវនឹង៖","matches:","correspond à :"],
+["ជំនួយគិត differential ប៉ុណ្ណោះ មិនមែនការវិនិច្ឆ័យទេ។ ក្នុងកម្ពុជា ករណីគ្រុន គួរគិតទាំង Dengue និង Malaria; ជំងឺផ្សេងក្រៅបញ្ជីក៏អាចកើតមាន។ គ្រូពេទ្យជាអ្នកសម្រេច។","Differential aid only, not a diagnosis. In Cambodia, consider both Dengue and Malaria in fever; diseases outside this list can also occur. The physician decides.","Aide au différentiel uniquement, pas un diagnostic. Au Cambodge, évoquer à la fois dengue et paludisme devant une fièvre ; d'autres maladies hors liste sont possibles. Le médecin décide."],
+["មិនមានជំងឺក្នុងបញ្ជីដែលត្រូវនឹង","No disease in the list matches","Aucune maladie de la liste ne correspond"],
+["ថ្នាំក្នុងក្រុមតែមួយ / ជំនួសគ្នាបាន","Drugs in the same class / interchangeable","Médicaments de même classe / interchangeables"],
+["ដូស និងសមមូលជាតម្លៃប្រហែលសម្រាប់មនុស្សពេញវ័យ។ មុនជំនួស ពិនិត្យ តម្រងនោម/ថ្លើម, មានផ្ទៃពោះ, អាឡែស៊ី, អន្តរកម្ម, និងថ្នាំដែលមានក្នុង formulary។ មិនទាន់ផ្ទៀងផ្ទាត់ជាមួយ guideline/formulary កម្ពុជា។","Doses and equivalences are approximate adult values. Before swapping, check kidney/liver function, pregnancy, allergy, interactions and what is in your formulary. Not yet verified against Cambodian guidelines/formulary.","Doses et équivalences : valeurs adultes approximatives. Avant substitution, vérifier fonction rénale/hépatique, grossesse, allergie, interactions et le formulaire disponible. Non vérifié avec les recommandations/formulaire du Cambodge."],
+["បកស្រាយលទ្ធផលពិនិត្យអម និងសញ្ញា","Interpreting investigations and signs","Interprétation des examens et signes"],
+["សញ្ញាពិនិត្យរាងកាយ (Positive signs)","Physical signs (positive signs)","Signes cliniques (signes positifs)"],
+["ជួរយោងប្រហែល (មនុស្សពេញវ័យ) – ប្រើជួរយោងរបស់មន្ទីរពិសោធន៍ដែលអ្នកប្រើ ហើយបកស្រាយតាមគ្លីនិក។ មិនទាន់ផ្ទៀងផ្ទាត់ជាមួយ guideline ជាតិកម្ពុជា។","Approximate adult reference ranges – use your laboratory's ranges and interpret clinically. Not yet verified against Cambodian national guidelines.","Valeurs de référence adultes approximatives – utiliser celles de votre laboratoire et interpréter cliniquement. Non vérifié avec les recommandations nationales cambodgiennes."],
+["កែ JSON រួចចុច «រក្សាទុក»។ ទិន្នន័យរក្សាក្នុង browser នេះ (បើមាន) ហើយអាច Export ជាឯកសារ។","Edit the JSON then press “Save”. Data is kept in this browser (if available) and can be exported to a file.","Modifier le JSON puis « Enregistrer ». Les données restent dans ce navigateur (si possible) et peuvent être exportées."],
+["រក្សាទុក","Save","Enregistrer"],
+["គ្មានលទ្ធផល – សាកល្បង 🌐 ស្វែងរកក្នុង Internet","No results – try 🌐 Internet search","Aucun résultat – essayer 🌐 la recherche Internet"],["គ្មានលទ្ធផល","No results","Aucun résultat"],
+["ព្រាង – ផ្ទៀងផ្ទាត់ជាមួយ WHO និង CNM/MoH កម្ពុជា មុនប្រើ","Draft – verify with WHO and Cambodian CNM/MoH before use","Brouillon – vérifier avec l'OMS et le CNM/MSP du Cambodge avant usage"],
+["ព្រាង – ត្រូវផ្ទៀងផ្ទាត់ជាមួយ CNM/MoH កម្ពុជា","Draft – verify with Cambodian CNM/MoH","Brouillon – vérifier avec le CNM/MSP du Cambodge"],["ព្រាង","Draft","Brouillon"],
+["🩺 សញ្ញា/លទ្ធផលដែលគាំទ្រ និង differential","🩺 Supporting signs/results and differential","🩺 Signes/résultats en faveur et différentiel"],
+["★ = ចំណុចសំខាន់ (ទម្ងន់ខ្ពស់)","★ = key feature (high weight)","★ = élément clé (poids élevé)"],
+["Differential ត្រូវបែងចែក៖","Differential to exclude:","Différentiel à écarter :"],
+["🧪 ការពិនិត្យ និងសញ្ញា – ការបកស្រាយ","🧪 Investigations and signs – interpretation","🧪 Examens et signes – interprétation"],
+["ជួរយោងប្រហែល ប្រើតាមមន្ទីរពិសោធន៍របស់អ្នក។","Approximate ranges; use your laboratory's.","Valeurs approximatives ; utiliser celles de votre laboratoire."],
+["💊 ថ្នាំជំនួសក្នុងក្រុមតែមួយ","💊 Same-class substitutes","💊 Substituts de même classe"],
+["ពិនិត្យ តម្រងនោម/ថ្លើម, មានផ្ទៃពោះ, អាឡែស៊ី, អន្តរកម្ម និងថ្នាំមាននៅ formulary មុនជំនួស។","Check kidney/liver function, pregnancy, allergy, interactions and formulary availability before swapping.","Vérifier fonction rénale/hépatique, grossesse, allergie, interactions et disponibilité au formulaire avant substitution."],
+["សូមវាយឈ្មោះជំងឺក្នុងប្រអប់ស្វែងរកជាមុន","Please type a disease name in the search box first","Saisir d'abord un nom de maladie dans la zone de recherche"],
+["លទ្ធផលពី Internet៖","Internet results:","Résultats Internet :"],["តំណស្វែងរកផ្ទាល់៖","Direct search links:","Liens de recherche directs :"],
+["កំពុងស្វែងរក…","Searching…","Recherche en cours…"],["មិនអាចភ្ជាប់ Internet","Cannot connect to the Internet","Connexion Internet impossible"],
+["ប្រភព Wikipedia ជាព័ត៌មានទូទៅ មិនមែន guideline ព្យាបាលទេ – សូមផ្ទៀងផ្ទាត់ជាមួយ WHO/CNM។","Wikipedia gives general information, not treatment guidelines – verify with WHO/CNM.","Wikipedia donne des informations générales, pas des recommandations thérapeutiques – vérifier avec l'OMS/CNM."]
+].forEach(a=>M(a[0],a[1],a[2]));
+M("ត្រូវបន្ថែម៖ គោលការណ៍ណែនាំជាតិកម្ពុជា","To add: Cambodian national guidelines","À ajouter : recommandations nationales cambodgiennes");M("WHO guidelines (ទូទៅ)","WHO guidelines (general)","Recommandations OMS (générales)");
+function T(s){const m=MAP[s];return LANG==="km"||!m?s:m[LANG==="en"?0:1]}
+function dn(d){return LANG==="en"&&d.en?d.en:LANG==="fr"&&d.fr?d.fr:d.name}
+const ORIG=new WeakMap();
+function loc(){
+ const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+ while(n=w.nextNode()){const pt=n.parentNode&&n.parentNode.tagName;if(pt==="SCRIPT"||pt==="STYLE"||pt==="TEXTAREA")continue;
+  let o=ORIG.get(n);if(o===undefined){o=n.nodeValue;ORIG.set(n,o)}
+  const k=o.trim(),m=MAP[k];
+  if(m){const v=LANG==="km"?o:o.replace(k,m[LANG==="en"?0:1]);if(n.nodeValue!==v)n.nodeValue=v}}
+ const sq=document.getElementById("sq");if(sq){if(!sq.dataset.o)sq.dataset.o=sq.placeholder;const P={"វាយឈ្មោះថ្នាំ ឬក្រុម…":["Type a drug or class name…","Saisir un médicament ou une classe…"]}[sq.dataset.o];sq.placeholder=LANG==="km"||!P?sq.dataset.o:P[LANG==="en"?0:1]}
+}
+let _lt;new MutationObserver(()=>{clearTimeout(_lt);_lt=setTimeout(loc,0)}).observe(document.body,{childList:true,subtree:true});
+buildDx();buildLab();buildSub();setLang(LANG);
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getFirestore,doc,getDoc,setDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+const firebaseConfig={apiKey:"AIzaSyBoj976CxiL-7z9DMSjlv0uUpQNhB78vTA",authDomain:"treatment-dr-gen.firebaseapp.com",projectId:"treatment-dr-gen",storageBucket:"treatment-dr-gen.firebasestorage.app",messagingSenderId:"172181898340",appId:"1:172181898340:web:efb5fa3db8dc0c7364cb71"};
+const app=initializeApp(firebaseConfig),fdb=getFirestore(app),auth=getAuth(app);
+const ref=doc(fdb,"guidelines","main");
+const st=t=>{const e=document.getElementById("cst");if(e)e.textContent=t};
+async function load(force){
+ try{
+  if(!force&&localStorage.getItem(KEY)){st("☁ មានកំណែក្នុងម៉ាស៊ីននេះ – ចុច Load ដើម្បីយកពី Cloud");return}
+  const s=await getDoc(ref);
+  if(!s.exists()){st("☁ Cloud មិនទាន់មានទិន្នន័យ");return}
+  const arr=JSON.parse(s.data().json),ids=new Set(arr.map(d=>d.id));
+  DEFAULT.forEach(d=>{if(!ids.has(d.id))arr.push(d)});
+  arr.forEach(d=>{if(!d.feat){const x=DEFAULT.find(y=>y.id===d.id);if(x&&x.feat)d.feat=x.feat}});
+  DB=arr;try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}
+  render();st("☁ បានទាញពី Cloud ("+arr.length+" ធាតុ)");
+ }catch(e){st("☁ មិនអាចអាន Cloud (offline ឬ rules)")}
+}
+async function save(){
+ if(!auth.currentUser){st("☁ សូម Sign in ជាមុន");return}
+ try{await setDoc(ref,{json:JSON.stringify(DB),updated:Date.now(),by:auth.currentUser.email||""});st("☁ បានរក្សាទុកទៅ Cloud")}
+ catch(e){st("☁ រក្សាទុកមិនបាន – ពិនិត្យ rules/គណនី")}
+}
+window.cloudLoad=()=>load(true);
+window.cloudSaveNow=save;
+window.cloudSave=()=>{if(auth.currentUser)save()};
+window.cloudSign=async()=>{try{if(auth.currentUser)await signOut(auth);else await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){st("☁ Sign in មិនបាន – ពិនិត្យ Authorized domains")}};
+onAuthStateChanged(auth,u=>{const b=document.getElementById("csign");if(b)b.textContent=u?"☁ Sign out ("+(u.email||"")+")":"☁ Sign in (Google)"});
+load(false);
+</script>
+</body>
+</html>
